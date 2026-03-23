@@ -130,7 +130,7 @@ DAX is an in-memory cache in front of DynamoDB that speeds up reads from millise
 
     - You write this policy inside DynamoDB (on the table itself) in Account A
     - This policy is NOT written in IAM → Policies, It is directly attached to the DynamoDB table
-    - **Account A (111111111111)**  `Owner of the DynamoDB table (`UsersTable`)`
+    - **Account A (111111111111)**  `Owner of the DynamoDB table (UsersTable)`
     - **Account B (222222222222)** `External account that needs read access`
     - Policy (How Resource-Based Policies works)
 
@@ -191,11 +191,50 @@ DAX is an in-memory cache in front of DynamoDB that speeds up reads from millise
 ```
 ---
 
-## 3. Advanced TTL (Time to Live) Mechanics
+## 3. Advanced TTL (Time to Live) Mechanics : 
+    * DynamoDB TTL lets items "self-destruct" after a set time, but it works behind the scene
 
-* **The 48-Hour Deletion Window:** TTL does not delete items the second they expire. DynamoDB typically removes them within **48 hours**.
+* **The 48-Hour Deletion Window:** TTL does not delete items the second they expire. DynamoDB typically removes them within **48 hours** and one table can have one TTL column max.
+    ```Is the 48-hour TTL deletion window fixed or configurable
+        👉 Short answer:
+            ⛔ You CANNOT configure it any custom time apart from 48hr
+            ⛔ It is NOT guaranteed to be exactly 48 hours
+            ✅ It is a best-effort window managed internally by DynamoDB
+    ``` 
+   
+    - Enable TTL on the table 
+        - You must explicitly enable TTL and tell DynamoDB which column to use.
+        - Option A: AWS Console
+        - Go to your DynamoDB table
+        - Click “Additional settings”
+        - Find Time to Live (TTL)
+        - Click Enable
+        - Enter attribute name (e.g. ttl)
+        - Save
+    - What happens When DynamoDB finally deletes the item:
+        - Internal TTL worker deletes the item
+        - A record is pushed into DynamoDB Streams
+        - That record looks different from normal deletes
     * *Expert Tip:* Always include a filter in your queries to ignore items where `ExpirationTime < CurrentTime` to avoid showing "stale" data to users.
 * **The Archiving Pattern (TTL + Streams):** When TTL deletes an item, it is recorded in the DynamoDB Stream with a specific `userIdentity` of "DynamoDB Service." You can trigger a Lambda from this stream to archive the data to **Amazon S3** for long-term compliance before it vanishes forever.
+
+    **Full simple flow:**
+    ```
+    Item expires
+       ↓
+    DynamoDB deletes it
+       ↓
+    Stream says "item deleted"
+       ↓
+    Lambda runs
+       ↓
+    Save item to S3
+    ```
+
+    * **👉 DynamoDB Streams** is NOT a separate AWS service
+        - It is a feature inside DynamoDB
+        - You enable it on a table
+        - It automatically starts recording changes
 
 ---
 
