@@ -1,10 +1,10 @@
 # DynamoDB Expert Roadmap & SQL Migration Guide
+## DynamoDB Architectural Internals & Advanced Modeling
 
 This guide focuses on high-scale architecture, internal mechanics, and the strategic shift from relational to non-relational modeling.
 
 
 To master DynamoDB at a 10-year experience level, you must move beyond CRUD and understand the "Distributed Systems" nature of the service.
-# DynamoDB Architectural Internals & Advanced Modeling
 
 ## 1. Architectural Internals
 
@@ -331,7 +331,6 @@ If you need to query by status across many different users simultaneously, creat
 **Result:** When you query `status = DELIVERED` on the GSI, DynamoDB only touches the data that matches that status. There is zero waste, and you only pay for the items you actually retrieve.
 
 ---
-# AWS DynamoDB: Write Sharding for Ultra-Hot Keys
 
 ## 5. Write Sharding (For Ultra-Hot Keys)
 
