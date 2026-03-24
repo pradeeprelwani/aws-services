@@ -213,8 +213,6 @@ async function secureDatabaseOperations() {
 }
 ```
 ---
-# AWS DynamoDB: Time to Live (TTL) & Archiving
-
 ## 3. Advanced TTL (Time to Live) Mechanics
 
 DynamoDB **Time to Live (TTL)** allows items to "self-destruct" automatically after a specified timestamp. This background process helps manage storage costs by removing stale data without consuming your provisioned throughput.
@@ -273,7 +271,6 @@ It is important to understand the nature of the streaming capability to use it e
 * **Activation:** It must be enabled at the table level, where you can choose what information is written to the stream (e.g., Keys only, New Image, Old Image, or both).
 * **Functionality:** Once enabled, it automatically records a time-ordered sequence of every item-level modification (**Create**, **Update**, **Delete**) in the table for up to 24 hours.
 ---
-# AWS DynamoDB: The Filter Expression Efficiency Trap
 
 ## 4. The "Filter Expression" Efficiency Trap
 
