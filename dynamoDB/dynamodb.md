@@ -433,6 +433,7 @@ In the AWS Console:
 4.  **Retrieval:** OpenSearch returns the matching record ("Pradeep") based on relevance.
 5.  **Response:** The UI displays the correct result to the user.
 ---
+## <span style="color:red">Work in progress</span>
 ## 7. Zero-Downtime Migration: "The Drift"
 
 * **Idempotency & Versioning:** During "Dual Writes," network failures can cause retries. Use a `version` attribute or the `attribute_not_exists(PK)` check in your TypeScript code to ensure you don't overwrite newer data with older data during the migration window.
