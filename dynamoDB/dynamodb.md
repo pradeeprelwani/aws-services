@@ -773,13 +773,13 @@ Use **Amazon CloudWatch** to track health:
 
 ## 20. Multi-Tenant Design (SaaS)
 * **Pattern:** `PK = TENANT#<ID>`, `SK = USER#<ID>`
-👉 **Result:** Ensures data isolation and allows for efficient querying of all data belonging to a specific customer.
+- **Result:** Ensures data isolation and allows for efficient querying of all data belonging to a specific customer.
 
 ---
 
 ## 21. Time-Series Pattern
 * **Design:** `PK = SENSOR_ID`, `SK = TIMESTAMP`
-👉 **Enables:** High-velocity ingestion and efficient range queries (e.g., "Get data from the last 2 hours").
+- **Enables:** High-velocity ingestion and efficient range queries (e.g., "Get data from the last 2 hours").
 
 ---
 
