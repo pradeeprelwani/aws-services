@@ -549,22 +549,22 @@ In the AWS Console:
         1. Read current data from DB
         → name = "Pradeep", version = 1
 
-        2. User sends update
-        → name = "Pradeep Kumar"
+    2. User sends update
+    → name = "Pradeep Kumar"
 
-        3. App prepares update
-        → new version = 2
+    3. App prepares update
+    → new version = 2
 
-        4. Send update with condition
-        → Update name = "Pradeep Kumar"
-        → Set version = 2
-        → ONLY IF current version = 1
+    4. Send update with condition
+    → Update name = "Pradeep Kumar"
+    → Set version = 2
+    → ONLY IF current version = 1
 
-        5. DB checks condition:
-        ✔ If version = 1 → Update succeeds
-        ❌ If version ≠ 1 → Reject update
-        
-        Note : We update data only if the version matches, so outdated requests can’t overwrite newer data.
+    5. DB checks condition:
+    ✔ If version = 1 → Update succeeds
+    ❌ If version ≠ 1 → Reject update
+    
+    Note : We update data only if the version matches, so outdated requests can’t overwrite newer data.
     ```
 * **Data Drift:** Use a comparison script (Dark Reading) to periodically check if the data in your new DynamoDB table matches the source SQL database before performing the final cutover.
     - During migration (SQL → DynamoDB), both DBs are running.
