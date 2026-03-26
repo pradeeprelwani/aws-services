@@ -546,8 +546,8 @@ In the AWS Console:
     ```
 * **Final Solution with Versioning Flow**
     ```
-        1. Read current data from DB
-        → name = "Pradeep", version = 1
+    1. Read current data from DB
+    → name = "Pradeep", version = 1
 
     2. User sends update
     → name = "Pradeep Kumar"
