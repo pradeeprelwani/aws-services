@@ -116,10 +116,33 @@ DynamoDB manages "Hot Partitions" by rebalancing throughput dynamically across t
 * **Bursting:** For short-lived traffic spikes, DynamoDB retains a "burst buffer" of unused capacity (up to 5 minutes) to handle sudden surges.
 
 #### 1.1.3 Global Admission Control (GAC)
-GAC is the internal mechanism that enforces throughput limits at the table level across the entire distributed fleet. It prevents "noisy neighbors" in a multi-tenant environment from impacting the performance of other AWS customers.
 
+GAC is a system that helps manage how requests are handled. Here is a simple breakdown of how it works:
+
+- **What is GAC?** : It acts like a gatekeeper for internal requests. It makes sure everything stays organized.
+- **Where does it work?** :It works at the very beginning, before the data reaches the partition.
+- **Can we configure it?** : No. You cannot change the settings for GAC yourself.
+- **Why does throttling happen?** : Throttling occurs when the system gets too much work at once. This usually happens because of:
+    * Too many requests (overload)
+    * Poor system design
+- **How to avoid issues?** To keep things running smoothly, you should:
+    * Use a good Partition Key (PK)
+    * Scale your system properly
+    * Use a retry plan if a request fails
+- Where GAC works (internally)
+    ```
+    Your API Request
+        ↓
+    Global Admission Control (GAC)
+        ↓
+    Partition (where data lives)
+        ↓
+    Response
+    ```
+    
 #### 1.1.4 B-Tree Indexing
-Within each partition, the **Sort Key (SK)** is physically stored in a B-Tree structure. This enables high-performance range queries using operators like `begins_with`, `between`, and comparison operators (`>`, `<`).
+- Within each partition, the **Sort Key (SK)** is physically stored in a B-Tree structure. This enables high-performance range queries using operators like `begins_with`, `between`, and comparison operators (`>`, `<`).
+- DynamoDB uses B-Tree on Sort Key to quickly find ordered data inside a partition without scanning
 
 ---
 
@@ -145,6 +168,12 @@ When data changes in DynamoDB (insert/update/delete), you can trigger downstream
 DynamoDB supports atomic transactions for complex operations.
 * **Limits:** Maximum of 100 items per transaction.
 * **Cost:** Approximately 2x the cost of a normal write because DynamoDB performs extra coordination checks to guarantee consistency.
+* **How DynamoDB Handles It Internally** When you run a transaction:
+    - DynamoDB locks/checks items
+    - Verifies no conflicts
+    - Performs all operations
+    - Commits only if everything is safe
+    - If anything fails → rollback
 
 #### 1.3.3 Global Tables (Active-Active)
 Provides multi-region replication and conflict resolution.
@@ -238,13 +267,10 @@ The following example demonstrates how to use the `@aws-crypto/client-node` alon
 ```javascript
 const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
 const { encrypt, decrypt } = require("@aws-crypto/client-node");
-
 // Step 1: Define the KMS Key ARN (The root of trust)
 const keyArn = "arn:aws:kms:ap-south-1:111111111111:key/your-key-id";
-
 // Initialize the standard DynamoDB client
 const dynamo = new DynamoDBClient({ region: "ap-south-1" });
-
 // Example data containing Personally Identifiable Information (PII)
 const user = {
     name: "Pradeep",
@@ -256,22 +282,12 @@ async function secureDatabaseOperations() {
         // Step 2: Encrypt data before it leaves the application
         // The SDK handles the interaction with KMS to secure the payload
         const encryptedUser = await encrypt(keyArn, user);
-
         // Step 3: Store the encrypted "blob" or fields in DynamoDB
-        await dynamo.put({
-            TableName: "UsersTable",
-            Item: encryptedUser
-        });
-
+        await dynamo.put({TableName: "UsersTable", Item: encryptedUser});
         // Step 4: Retrieve the data from DynamoDB
-        const result = await dynamo.get({
-            TableName: "UsersTable",
-            Key: { name: "Pradeep" }
-        });
-
+        const result = await dynamo.get({TableName: "UsersTable",Key: { name: "Pradeep" }});
         // Step 5: Decrypt the data after reading so the app can use it
         const { decryptedUser } = await decrypt(keyArn, result.Item);
-        
         console.log("Decrypted User Data:", decryptedUser);
     } catch (error) {
         console.error("Encryption/Decryption Error:", error);
@@ -317,7 +333,6 @@ To use TTL, you must explicitly enable it and designate a specific attribute—f
 When the internal TTL worker deletes an item, the event is captured by **DynamoDB Streams**. This is a powerful architectural pattern used to preserve data for compliance or analytics before it is permanently purged.
 
 
-
 **Archiving Workflow:**
 1.  **Item Expires:** The Unix timestamp in the designated TTL attribute is reached.
 2.  **DynamoDB Deletes:** The background process identifies and removes the item.
@@ -327,7 +342,7 @@ When the internal TTL worker deletes an item, the event is captured by **DynamoD
 5.  **S3 Archive:** The Lambda function processes the item data and writes it to **Amazon S3** for long-term storage.
 
 **Summary Flow:**
-`Item expires` → `DynamoDB deletes it` → `Stream records event` → `Lambda triggers` → `Save to S3`
+>Item expires → DynamoDB deletes it → Stream records event → Lambda triggers → Save to S3
 
 ---
 
@@ -346,13 +361,10 @@ A common misconception in DynamoDB is that a `FilterExpression` reduces the cost
 ### Filter vs. Query: The Execution Order
 When you execute a query with a `FilterExpression`, DynamoDB follows this specific sequence:
 
-
-
 1.  **Read:** DynamoDB reads data from the partition based on the Partition Key (PK) and any optional Sort Key (SK) conditions defined in the `KeyConditionExpression`.
 2.  **Filter:** It then applies your `FilterExpression` to the retrieved items in memory.
 3.  **Return:** Only the items that pass the filter are returned to your application.
 
-**Crucial Point:** You are charged for the total amount of data read in **Step 1**, regardless of how many items are discarded in **Step 2**.
 
 ---
 
@@ -414,6 +426,7 @@ Imagine storing users with a generic status as the Partition Key:
 * **Scenario:** 10,000 users become `ACTIVE` at the exact same moment.
 * **Execution:** All 10,000 writes target the single key `ACTIVE`.
 * ❌ **Result:** The 1,000 WCU/sec limit is breached, leading to massive throttling and application failures.
+
 
 ---
 
@@ -613,6 +626,12 @@ In SQL, you model data. In DynamoDB, you **model queries**.
 3. Determine the "velocity" (read/write frequency) of each pattern.
     1. Which API is used a lot? (high traffic)
     2. Which is rare?
+```
+Handle this in 3 steps:
+1.JOIN data in SQL
+2.Group it in Node.js (reduce)
+3.Insert structured JSON into DynamoDB
+```
 
 ### Step 2: Denormalization & Schema Design
 
@@ -660,7 +679,7 @@ In SQL, you model data. In DynamoDB, you **model queries**.
 
 ---
 
-## 8. Consistency Models
+## 10. Consistency Models
 DynamoDB replicates data across three facilities (Availability Zones). How you read that data affects both cost and accuracy.
 
 * **Eventually Consistent (Default):**
@@ -676,7 +695,7 @@ DynamoDB replicates data across three facilities (Availability Zones). How you r
 
 ---
 
-## 9. Conditional Writes & Optimistic Locking
+## 11. Conditional Writes & Optimistic Locking
 To prevent "Lost Updates" in a distributed system, use **Optimistic Locking**.
 
 * **Mechanism:** Include a `version` attribute in your item.
