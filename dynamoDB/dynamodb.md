@@ -18,7 +18,7 @@ To master DynamoDB at a 10-year experience level, you must move beyond CRUD and 
 4. [Security & Governance](#4-advanced-security--governance)
 5. [TTL (Time to Live)](#5-advanced-ttl-time-to-live-mechanics)
 6. [Filter Expression Trap](#6-the-filter-expression-efficiency-trap)
-7. [Write Sharding](#7-write-sharding)
+7. [Write Sharding](#7-write-sharding-for-ultra-hot-keys)
 8. [Import / Export](#8-enterprise-importexport-patterns)
 9. [Zero-Downtime Migration](#9-zero-downtime-migration-the-drift)
 10. [SQL → DynamoDB Migration](#10-sql-to-dynamodb-migration-strategy)
@@ -524,7 +524,7 @@ In the AWS Console:
 - **Idempotency & Versioning:** During "Dual Writes," network failures can cause retries. Use a `version` attribute or the `attribute_not_exists(PK)` check in your TypeScript code to ensure you don't overwrite newer data with older data during the migration window.
 - **Dual Write + Retry Flow: (Request 1)**
 
-    ```
+    ```text
    User updates name = "Pradeep"
         ↓
     Write to SQL ✅
@@ -536,7 +536,7 @@ In the AWS Console:
 
 - **Another Api Request (Request 2)**
 
-    ```
+    ```text
    User updates name = "Pradeep kumar"
         ↓
     Write to SQL ✅
@@ -548,7 +548,7 @@ In the AWS Console:
 
 - **❌ Problem (late retry comes back)**
 
-    ```
+    ```text
     Retry old request (Request 1):
     name = "Pradeep"
         ↓
@@ -557,7 +557,7 @@ In the AWS Console:
 
 - **Final Solution with Versioning Flow**
 
-    ```
+    ```text
     1. Read current data from DB
     → name = "Pradeep", version = 1
 
@@ -583,7 +583,7 @@ In the AWS Console:
   - During migration (SQL → DynamoDB), both DBs are running.
   - Sometimes data becomes different bw both database (data drift)
   - Data Drift Check (Dark Reading Flow)
-        ```
+        ```text
     Script execution timing (Every few minutes / hours):
                 ↓
         Run comparison script
@@ -642,7 +642,7 @@ In SQL, you model data. In DynamoDB, you **model queries**.
     1. Which API is used a lot? (high traffic)
     2. Which is rare?
 
-```
+```text
 Handle this in 3 steps:
 1.JOIN data in SQL
 2.Group it in Node.js (reduce)
@@ -680,7 +680,7 @@ Handle this in 3 steps:
 ## 11. DynamoDB Performance Optimization (100K Records)
 
 | # | Topic | ✅ Do (Best Practice) | ❌ Don’t Do |
-|---|------|----------------------|------------|
+| --- | ------- | ---------------------- | ------------ |
 | 1 | Hot Partitions | Use high-cardinality keys / sharding | Use same partition key for many requests |
 | 2 | API Calls | Use BatchWriteItem / BatchGetItem | Make one API call per item |
 | 3 | Processing | Use parallel execution (Promise.all) | Process requests sequentially |
@@ -690,8 +690,8 @@ Handle this in 3 steps:
 | 7 | Capacity | Use On-Demand / Auto Scaling | Keep fixed low capacity under high load |
 | 8 | Caching | Use DAX for frequent reads | Hit DB for every request |
 | 9 | Item Size | Keep items small, use S3 for large data | Store large blobs in DynamoDB |
-|10 | Processing Logic | Use async (Streams + Lambda) | Do heavy work inside API |
-|11 | Data Fetching | Use pagination (LastEvaluatedKey) | Fetch huge data (100k) in one request |
+| 10 | Processing Logic | Use async (Streams + Lambda) | Do heavy work inside API |
+| 11 | Data Fetching | Use pagination (LastEvaluatedKey) | Fetch huge data (100k) in one request |
 
 ## 12. Consistency Models
 
@@ -734,7 +734,7 @@ You add a small piece of info called a **version** to your item. Think of it lik
 
 - **With Optimistic Locking**
 
-    ```
+    ```text
     Initial: version = 1
 
     User A reads version = 1
@@ -775,7 +775,7 @@ Instead of giving up or trying again immediately, you should use a smart retry p
 - **Exponential Backoff:** This means you wait a little bit longer after each failed try. For example, wait 1 second, then 2 seconds, then 4 seconds.
     Example
 
-    ```
+    ```text
     1000 requests fail at same time
     ↓
     All retry after 1 second
@@ -788,7 +788,7 @@ Instead of giving up or trying again immediately, you should use a smart retry p
 - **Jitter:** This adds a tiny bit of random time to each wait. Instead of exactly 2 seconds, you might wait 1.8 or 2.1 seconds.
     Example
 
-    ```
+    ```text
     1000 requests fail
     ↓
     Retry times become random:
@@ -811,7 +811,7 @@ If a thousand computers all try to fix the error at the exact same second, they 
 
 ---
 
-# Pagination in DynamoDB
+## Pagination in DynamoDB
 
 ### The 1MB Limit
 
@@ -861,7 +861,7 @@ To get the next set of data, you use two special labels:
 - Two Types of Secondary Index
     1. LSI (Local) : Same PK, different SK
 
-        ```
+        ```text
         PK = userId
         SK = orderDate   (main table)
 
@@ -872,7 +872,7 @@ To get the next set of data, you use two special labels:
 
     2. GSI (Global) : Completely new key
 
-        ```
+        ```text
         Main:
         PK = userId
 
