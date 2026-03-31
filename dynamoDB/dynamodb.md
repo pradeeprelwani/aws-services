@@ -115,9 +115,7 @@ Once a request passes GAC, DynamoDB must find the physical location of the data.
 - Within each partition, the **Sort Key (SK)** is physically stored in a B-Tree structure. This enables high-performance range queries using operators like `begins_with`, `between`, and comparison operators (`>`, `<`).
 - DynamoDB uses B-Tree on Sort Key to quickly find ordered data inside a partition without scanning
 
----
 View Topic 1: Architectural Internals Flow Example (SVG)
-
 ---
 
 ## 2. Advanced Data Modeling (The "No-Join" Philosophy)
@@ -128,9 +126,7 @@ View Topic 1: Architectural Internals Flow Example (SVG)
 
 - **Sparse Indexes:** By only populating a GSI attribute for specific items, you create a "Sparse Index." This is ideal for "Needle in a Haystack" queries, such as finding only the "In-Progress" orders out of millions of "Completed" ones.
 
----
 View Topic 2: Advanced Data Modeling Flow Example (SVG)
-
 ---
 
 ## 3. Operations & Performance at Scale
@@ -202,9 +198,7 @@ While powerful, DAX is not a "one-size-fits-all" solution. Avoid DAX if:
 - **Cost Sensitivity:** DAX is an additional provisioned resource (clusters of nodes). If millisecond latency (standard DynamoDB) is sufficient for your SLA, the extra cost of a DAX cluster may not be justified.
 - **Frequently Changing Data:** If your data expires or changes every few seconds, the cache churn (constant invalidation and reloading) can negate the performance benefits.
 
----
 View Topic 3: Operations & Performance Flow Example (SVG)
-
 ---
 
 ## 4. Advanced Security & Governance
@@ -294,6 +288,9 @@ async function secureDatabaseOperations() {
         console.error("Encryption/Decryption Error:", error);
     }
 }
+```
+View Topic 4: Advanced Security & Governance Flow Example (SVG)
+---
 ```
 
 ---
