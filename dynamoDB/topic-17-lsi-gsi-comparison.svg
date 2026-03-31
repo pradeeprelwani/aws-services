@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 850">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#000" />
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="#f4f4f4"/>
+  <rect width="100%" height="50" fill="#232F3E"/>
+  <text x="20" y="32" font-family="Arial" font-size="20" fill="#ffffff" font-weight="bold">17. LSI vs GSI Comparison Architectural Flow</text>
+
+  <!-- Data Schema Definition -->
+  <rect x="300" y="80" width="200" height="60" rx="10" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="400" y="105" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">Main Table Schema</text>
+  <text x="400" y="122" text-anchor="middle" font-family="Arial" font-size="11">(Base Partition Key + Sort Key)</text>
+
+  <!-- Write Amplification Router -->
+  <path d="M400,160 L580,230 L400,300 L220,170 Z" fill="#fff2cc" stroke="#d6b656" stroke-width="2" transform="translate(0,20)"/>
+  <text x="400" y="230" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Index Log Replicator</text>
+  <text x="400" y="245" text-anchor="middle" font-family="Arial" font-size="11">Propagate Mutations to Indexes</text>
+  <line x1="400" y1="140" x2="400" y2="180" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Projection Logic -->
+  <rect x="300" y="350" width="200" height="70" fill="#f8cecc" stroke="#b85450" stroke-width="2"/>
+  <text x="400" y="380" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Attribute Projection</text>
+  <text x="400" y="395" text-anchor="middle" font-family="Arial" font-size="11">Include | All | KeysOnly</text>
+  <line x1="400" y1="320" x2="400" y2="350" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Index Architecture Comparison -->
+  <rect x="40" y="460" width="720" height="320" fill="none" stroke="#999" stroke-dasharray="5,5"/>
+  <text x="50" y="480" font-family="Arial" font-size="12" font-weight="bold" fill="#666">Secondary Storage Engine Comparison</text>
+
+  <!-- LSI (Local) -->
+  <rect x="70" y="520" width="310" height="150" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="225" y="550" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">LSI (Local Secondary Index)</text>
+  <text x="225" y="575" font-family="Arial" font-size="11" fill="#82b366" font-weight="bold">Same Partition Key</text>
+  <text x="225" y="595" font-family="Arial" font-size="10">- Strong Consistency OK</text>
+  <text x="225" y="610" font-family="Arial" font-size="10">- Shared WCU/RCU from Table</text>
+  <text x="225" y="625" font-family="Arial" font-size="10" fill="#d9534f">- 10GB Item Collection Limit!</text>
+
+  <!-- GSI (Global) -->
+  <rect x="420" y="520" width="310" height="150" fill="#f5f5f5" stroke="#666" stroke-width="2"/>
+  <text x="575" y="550" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">GSI (Global Secondary Index)</text>
+  <text x="575" y="575" font-family="Arial" font-size="11" fill="#666" font-weight="bold">Different Partition Key</text>
+  <text x="575" y="595" font-family="Arial" font-size="10">- Eventually Consistent ONLY</text>
+  <text x="575" y="610" font-family="Arial" font-size="10">- Isolated Throughput (Indep.)</text>
+  <text x="575" y="625" font-family="Arial" font-size="10" fill="#2ca02c">- Unlimited scale / collection</text>
+
+  <!-- Common Search Polygon -->
+  <polygon points="250,700 550,700 520,780 220,780" fill="#e1d5e7" stroke="#9673a6" stroke-width="2"/>
+  <text x="385" y="730" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Cross-Index Query Flow</text>
+  <text x="385" y="750" text-anchor="middle" font-family="Arial" font-size="11">App logic selects index based on Sort Criteria</text>
+
+  <!-- Connections -->
+  <line x1="400" y1="420" x2="400" y2="460" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="225" y1="670" x2="385" y2="700" stroke="#666" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
+  <line x1="575" y1="670" x2="385" y2="700" stroke="#666" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
+
+  <!-- Legend -->
+  <rect x="580" y="350" width="180" height="70" fill="#f9f9f9" stroke="#ddd" />
+  <text x="590" y="370" font-family="Arial" font-size="11" font-weight="bold">GSI Limit Note:</text>
+  <text x="590" y="385" font-family="Arial" font-size="11">- Soft limit: 20</text>
+  <text x="590" y="400" font-family="Arial" font-size="11">- Request increase OK</text>
+</svg>

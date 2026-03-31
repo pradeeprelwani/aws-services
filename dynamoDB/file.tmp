@@ -56,7 +56,6 @@ To master DynamoDB at a 10-year experience level, you must move beyond CRUD and 
 42. [Index Projections](#42-secondary-index-projections)
 43. [Distributed Systems Thinking](#43-distributed-system-thinking)
 
----
 ## 1. Architectural Internals
 
 ### 1.1 Global Admission Control (GAC)
@@ -116,9 +115,6 @@ Once a request passes GAC, DynamoDB must find the physical location of the data.
 - DynamoDB uses B-Tree on Sort Key to quickly find ordered data inside a partition without scanning
 
 ---
-View Topic 1: Architectural Internals Flow Example (SVG)
-
----
 
 ## 2. Advanced Data Modeling (The "No-Join" Philosophy)
 
@@ -127,9 +123,6 @@ View Topic 1: Architectural Internals Flow Example (SVG)
 - **GSI Overloading:** A strategy to stay under the GSI limit (20 per table) by using generic attribute names (e.g., `GSI1_PK`, `GSI1_SK`). This allows a single index to serve different purposes for different entity types.
 
 - **Sparse Indexes:** By only populating a GSI attribute for specific items, you create a "Sparse Index." This is ideal for "Needle in a Haystack" queries, such as finding only the "In-Progress" orders out of millions of "Completed" ones.
-
----
-View Topic 2: Advanced Data Modeling Flow Example (SVG)
 
 ---
 
@@ -201,9 +194,6 @@ While powerful, DAX is not a "one-size-fits-all" solution. Avoid DAX if:
 - **Strict Strong Consistency:** DAX is optimized for **eventually consistent** reads. While it supports strongly consistent reads, they must be issued to the DynamoDB endpoint directly or they will bypass the cache gain.
 - **Cost Sensitivity:** DAX is an additional provisioned resource (clusters of nodes). If millisecond latency (standard DynamoDB) is sufficient for your SLA, the extra cost of a DAX cluster may not be justified.
 - **Frequently Changing Data:** If your data expires or changes every few seconds, the cache churn (constant invalidation and reloading) can negate the performance benefits.
-
----
-View Topic 3: Operations & Performance Flow Example (SVG)
 
 ---
 
@@ -637,7 +627,11 @@ async function safeMigrate(userData: any) {
   return await docClient.send(command);
 }
 ```
+---
+[View Topic 9: Zero-Downtime Migration Flow Example (SVG)](./topic-9-migration-drift.svg)
+---
 
+---
 ## 10. SQL to DynamoDB Migration Strategy
 
 Migrating to NoSQL is a **functional rewrite**, not a simple lift-and-shift.
@@ -685,7 +679,13 @@ Handle this in 3 steps:
 | **Data Goal** | Remove redundancy (Normalized). | Performance at scale (Denormalized). |
 | **Joins** | Handled by the Database engine. | Handled by your Schema Design (No Joins). |
 | **Scaling** | Vertical (Bigger Servers). | Horizontal (More Partitions). |
-| **New Queries** | Easy to add anytime. | Requires careful planning or a New Index (GSI). |## 11. DynamoDB Performance Optimization (100K Records)
+| **New Queries** | Easy to add anytime. | Requires careful planning or a New Index (GSI). |
+
+[View Topic 10: SQL to NoSQL Functional Rewrite Flow Example (SVG)](./topic-10-sql-to-ddb.svg)
+---
+
+---
+## 11. DynamoDB Performance Optimization (100K Records)
 
 | # | Topic | ✅ Do (Best Practice) | ❌ Don’t Do |
 | --- | ------- | ---------------------- | ------------ |
@@ -701,6 +701,10 @@ Handle this in 3 steps:
 | 10 | Processing Logic | Use async (Streams + Lambda) | Do heavy work inside API |
 | 11 | Data Fetching | Use pagination (LastEvaluatedKey) | Fetch huge data (100k) in one request |
 
+[View Topic 11: Performance Optimization Flow Example (SVG)](./topic-11-performance-optimization.svg)
+---
+
+---
 ## 12. Consistency Models
 
 DynamoDB replicates data across three facilities (Availability Zones). How you read that data affects both cost and accuracy.
@@ -716,8 +720,10 @@ DynamoDB replicates data across three facilities (Availability Zones). How you r
 
 **Expert Advice:** Use strongly consistent reads only for critical paths like financial ledger balances or inventory locks.
 
+[View Topic 12: Consistency Models Flow Example (SVG)](./topic-12-consistency-models.svg)
 ---
 
+---
 ## 13. Conditional Writes & Optimistic Locking
 
 To prevent data corruption when multiple updates happen at the same time (concurrent writes).
@@ -765,11 +771,11 @@ The rule looks like this: `attribute_not_exists(PK) OR version = :expectedVersio
 
 - It prevents "race conditions" where two updates collide.
 
-- It ensures that only the latest and most correct version of the data is saved.
-- It keeps your data safe without slowing down the system too much.
 
+[View Topic 13: Conditional Writes Flow Example (SVG)](./topic-13-conditional-writes.svg)
 ---
 
+---
 ## 14. Error Handling & Retry Strategy
 
 ### What happens when you use too much power?
@@ -815,9 +821,11 @@ If a thousand computers all try to fix the error at the exact same second, they 
 
 - **Without a Retry:** Your system will just fail even if the database is ready to work again a half-second later.
 
-- **With a Retry:** Your system stays strong and keeps working even when things get busy.
 
 ---
+### 🖼️ Architectural Diagram
+[View Topic 14: Error Handling & Retry Flow Example (SVG)](./topic-14-error-handling.svg)
+
 
 ## Pagination in DynamoDB
 
@@ -848,10 +856,11 @@ To get the next set of data, you use two special labels:
 
 - **Saves Memory:** Your application does not get overwhelmed by too much data at once.
 
-- **Faster Response:** Small "pages" of data travel faster over the internet than one giant file.
-- **Better Control:** You can show the user 10 items at a time instead of 1,000.
 
 ---
+### 🖼️ Architectural Diagram
+[View Topic 15: Pagination & 1MB Limit Flow Example (SVG)](./topic-15-pagination.svg)
+
 
 ## 16. Data Types & Limits
 
@@ -859,10 +868,11 @@ To get the next set of data, you use two special labels:
 
 - **Max Item Size:** One item (like a row in SQL) can be maximum 400 KB (includes all attribute names and values).
 - **Scalars:** String, Number, Boolean, Null, Binary.
-- **Documents:** **Map** (JSON-like objects) and **List** (ordered arrays).
-- **Sets:** String Set, Number Set, Binary Set (unique values only).
 
 ---
+### 🖼️ Architectural Diagram
+[View Topic 16: Data Types & Item Limits Flow Example (SVG)](./topic-16-data-types.svg)
+
 
 ## 17. Secondary Index Comparison (LSI vs GSI)
 
@@ -904,10 +914,12 @@ To get the next set of data, you use two special labels:
   - AWS has set 20 as the default maximum, BUT you can request AWS to increase it
 - LSI limit (5) is hard limit → cannot be increased.
 - Too many GSIs = higher cost + write amplification
-- To increase GSI  `Go to AWS Service Quotas >
 Request increase to 25 (or more)`
 
 ---
+### 🖼️ Architectural Diagram
+View Topic 17: LSI vs GSI Comparison Flow Example (SVG)
+
 
 ## 18. PartiQL (SQL-like Queries)
 
@@ -920,6 +932,9 @@ DynamoDB supports **PartiQL**, a SQL-compatible query language.
 Where to run PartiQL?
 >AWS Console > DynamoDB >  “PartiQL editor > Write query like:
 ---
+### 🖼️ Architectural Diagram
+View Topic 18: PartiQL Internal SQL Flow Example (SVG)
+
 
 ## 19. Backup & Restore
 
@@ -1000,6 +1015,9 @@ Where to run PartiQL?
 | **Automation** | You must do it manually | It works automatically |
 
 ---
+### 🖼️ Architectural Diagram
+View Topic 19: Backup & Restore (PITR) Flow Example (SVG)
+
 
 ## 20. IAM & Access Control
 

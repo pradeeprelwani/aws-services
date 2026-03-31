@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 850">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#000" />
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="#f4f4f4"/>
+  <rect width="100%" height="50" fill="#232F3E"/>
+  <text x="20" y="32" font-family="Arial" font-size="20" fill="#ffffff" font-weight="bold">9. Zero-Downtime Migration &amp; Drift Flow</text>
+
+  <!-- User Request Entry -->
+  <rect x="300" y="80" width="200" height="60" rx="10" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="400" y="105" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">Application User Update</text>
+  <text x="400" y="122" text-anchor="middle" font-family="Arial" font-size="11">(Request: Name = "Pradeep")</text>
+
+  <!-- Dual Write Strategy Diamond -->
+  <path d="M400,160 L580,230 L400,300 L220,170 Z" fill="#fff2cc" stroke="#d6b656" stroke-width="2" transform="translate(0,20)"/>
+  <text x="400" y="230" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Dual Write Router</text>
+  <text x="400" y="245" text-anchor="middle" font-family="Arial" font-size="11">Atomic Write to both DBs</text>
+  <line x1="400" y1="140" x2="400" y2="180" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Migration Conflict Logic -->
+  <rect x="300" y="350" width="200" height="70" fill="#f8cecc" stroke="#b85450" stroke-width="2"/>
+  <text x="400" y="380" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Optimistic Locking</text>
+  <text x="400" y="395" text-anchor="middle" font-family="Arial" font-size="11">Condition: version = :expected</text>
+  <line x1="400" y1="320" x2="400" y2="350" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Databases Layer -->
+  <rect x="40" y="460" width="720" height="320" fill="none" stroke="#999" stroke-dasharray="5,5"/>
+  <text x="50" y="480" font-family="Arial" font-size="12" font-weight="bold" fill="#666">Heterogeneous Storage State</text>
+
+  <!-- Legacy SQL -->
+  <rect x="70" y="510" width="230" height="120" fill="#f5f5f5" stroke="#666" stroke-width="2"/>
+  <text x="185" y="540" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">Legacy SQL (Truth)</text>
+  <text x="185" y="565" font-family="Arial" font-size="11">Status: Write Verified</text>
+  <text x="185" y="585" font-family="Arial" font-size="11" fill="#666">version: 15</text>
+
+  <!-- Target DynamoDB -->
+  <rect x="500" y="510" width="230" height="120" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="615" y="540" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">New DynamoDB</text>
+  <text x="615" y="565" font-family="Arial" font-size="11">Status: Migration Candidate</text>
+  <text x="615" y="585" font-family="Arial" font-size="11" fill="#82b366">version: 15 (Synced)</text>
+
+  <!-- Drift Comparison Logic -->
+  <polygon points="250,680 550,680 520,760 220,760" fill="#e1d5e7" stroke="#9673a6" stroke-width="2"/>
+  <text x="385" y="715" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Drift Verification (Dark Read)</text>
+  <text x="385" y="735" text-anchor="middle" font-family="Arial" font-size="11">Parallel Query Comparison Script</text>
+
+  <!-- Error Path Example -->
+  <path d="M 400 420 Q 300 440 200 510" fill="none" stroke="#d9534f" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#arrow)"/>
+  <text x="210" y="450" font-family="Arial" font-size="10" fill="#d9534f">Delayed Retry Blocked by version</text>
+
+  <!-- Connections -->
+  <line x1="400" y1="420" x2="400" y2="460" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="185" y1="630" x2="385" y2="680" stroke="#666" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
+  <line x1="615" y1="630" x2="385" y2="680" stroke="#666" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
+
+  <!-- Legend -->
+  <rect x="580" y="350" width="180" height="70" fill="#f9f9f9" stroke="#ddd" />
+  <text x="590" y="370" font-family="Arial" font-size="11" font-weight="bold">Strategy:</text>
+  <text x="590" y="385" font-family="Arial" font-size="11">- Dual Write First</text>
+  <text x="590" y="400" font-family="Arial" font-size="11">- Backfill Second</text>
+</svg>

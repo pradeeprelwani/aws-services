@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 850">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#000" />
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="#f4f4f4"/>
+  <rect width="100%" height="50" fill="#232F3E"/>
+  <text x="20" y="32" font-family="Arial" font-size="20" fill="#ffffff" font-weight="bold">13. Optimistic Locking &amp; Conditional Writes</text>
+
+  <!-- Concurrent User Requests -->
+  <rect x="70" y="80" width="180" height="80" rx="10" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="160" y="115" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">User A (Read v1)</text>
+  
+  <rect x="550" y="80" width="180" height="80" rx="10" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="640" y="115" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">User B (Read v1)</text>
+
+  <!-- Logic Evaluator Diamond -->
+  <path d="M400,160 L580,230 L400,300 L220,170 Z" fill="#fff2cc" stroke="#d6b656" stroke-width="2" transform="translate(0,60)"/>
+  <text x="400" y="270" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Condition Evaluator</text>
+  <text x="400" y="285" text-anchor="middle" font-family="Arial" font-size="11">version == :expected</text>
+  
+  <!-- Connections to Evaluator -->
+  <line x1="160" y1="160" x2="330" y2="240" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="640" y1="160" x2="470" y2="240" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Internal Lock Processor -->
+  <rect x="300" y="380" width="200" height="70" fill="#f8cecc" stroke="#b85450" stroke-width="2"/>
+  <text x="400" y="410" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Transaction Manager</text>
+  <text x="400" y="425" text-anchor="middle" font-family="Arial" font-size="11">Atomic "Check-then-Set"</text>
+  <line x1="400" y1="330" x2="400" y2="380" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Storage Partition Container -->
+  <rect x="40" y="480" width="720" height="320" fill="none" stroke="#999" stroke-dasharray="5,5"/>
+  <text x="50" y="500" font-family="Arial" font-size="12" font-weight="bold" fill="#666">DynamoDB Storage Layer</text>
+
+  <!-- Success Scenario -->
+  <rect x="70" y="530" width="310" height="120" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="225" y="560" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">Result: SUCCESS (User A)</text>
+  <text x="225" y="585" font-family="Arial" font-size="11" fill="#82b366" font-weight="bold">v1 -> v2 Updated</text>
+  <text x="225" y="610" font-family="Arial" font-size="10">Match: version in DB was 1</text>
+
+  <!-- Failure Scenario -->
+  <rect x="420" y="530" width="310" height="120" fill="#f5f5f5" stroke="#666" stroke-width="2"/>
+  <text x="575" y="560" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">Result: FAIL (User B)</text>
+  <text x="575" y="585" font-family="Arial" font-size="11" fill="#d9534f" font-weight="bold">ConditionalCheckFailedException</text>
+  <text x="575" y="610" font-family="Arial" font-size="10">Mismatch: DB is now v2, User B sent v1</text>
+
+  <!-- Conflict Resolution Loop -->
+  <polygon points="250,680 550,680 520,760 220,760" fill="#e1d5e7" stroke="#9673a6" stroke-width="2"/>
+  <text x="385" y="715" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Retry-on-Conflict Loop</text>
+  <text x="385" y="735" text-anchor="middle" font-family="Arial" font-size="11">App reads v2 -> merges changes -> tries v2->v3</text>
+
+  <!-- Flow Connections -->
+  <line x1="400" y1="450" x2="225" y2="530" stroke="#000" stroke-width="1.5" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
+  <line x1="400" y1="450" x2="575" y2="530" stroke="#000" stroke-width="1.5" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
+
+  <!-- Legend -->
+  <rect x="580" y="350" width="180" height="70" fill="#f9f9f9" stroke="#ddd" />
+  <text x="590" y="370" font-family="Arial" font-size="11" font-weight="bold">Rule:</text>
+  <text x="590" y="385" font-family="Arial" font-size="11">- Prevent Lost Updates</text>
+  <text x="590" y="400" font-family="Arial" font-size="11">- Atomic Versioning</text>
+</svg>

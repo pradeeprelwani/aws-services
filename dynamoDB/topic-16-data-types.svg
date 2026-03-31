@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 850">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#000" />
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="#f4f4f4"/>
+  <rect width="100%" height="50" fill="#232F3E"/>
+  <text x="20" y="32" font-family="Arial" font-size="20" fill="#ffffff" font-weight="bold">16. Data Types &amp; Internal Size Calculation</text>
+
+  <!-- Data Definition -->
+  <rect x="300" y="80" width="200" height="60" rx="10" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="400" y="105" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">JSON Document Structure</text>
+  <text x="400" y="122" text-anchor="middle" font-family="Arial" font-size="11">(Attribute-Value Pairs)</text>
+
+  <!-- Size Parser Diamond -->
+  <path d="M400,160 L580,230 L400,300 L220,170 Z" fill="#fff2cc" stroke="#d6b656" stroke-width="2" transform="translate(0,20)"/>
+  <text x="400" y="230" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Internal Size Parser</text>
+  <text x="400" y="245" text-anchor="middle" font-family="Arial" font-size="11">Sum of Name + Type + Value</text>
+  <line x1="400" y1="140" x2="400" y2="180" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Limit Guard -->
+  <rect x="300" y="350" width="200" height="70" fill="#f8cecc" stroke="#b85450" stroke-width="2"/>
+  <text x="400" y="380" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">400KB Hard Limit</text>
+  <text x="400" y="395" text-anchor="middle" font-family="Arial" font-size="11">ItemSize &gt; 400KB = REJECT</text>
+  <line x1="400" y1="320" x2="400" y2="350" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Type Mapping Container -->
+  <rect x="40" y="460" width="720" height="320" fill="none" stroke="#999" stroke-dasharray="5,5"/>
+  <text x="50" y="480" font-family="Arial" font-size="12" font-weight="bold" fill="#666">Native Data Type Architecture</text>
+
+  <!-- Scalar Types -->
+  <rect x="70" y="510" width="210" height="120" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="175" y="540" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">Scalars (Binary/UTF-8)</text>
+  <text x="175" y="565" font-family="Arial" font-size="11">- String (S)</text>
+  <text x="175" y="580" font-family="Arial" font-size="11">- Number (N)</text>
+  <text x="175" y="595" font-family="Arial" font-size="11">- Boolean (BOOL)</text>
+  <text x="175" y="610" font-family="Arial" font-size="11">- Binary (B)</text>
+
+  <!-- Complex Types -->
+  <rect x="295" y="510" width="210" height="120" fill="#f5f5f5" stroke="#666" stroke-width="2"/>
+  <text x="400" y="540" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">Documents (Nesting)</text>
+  <text x="400" y="565" font-family="Arial" font-size="11">- Map (M)</text>
+  <text x="400" y="580" font-family="Arial" font-size="11">- List (L)</text>
+  <text x="400" y="595" font-family="Arial" font-size="10" fill="#666">Depth max 32 levels</text>
+
+  <!-- Set Types -->
+  <rect x="520" y="510" width="210" height="120" fill="#f5f5f5" stroke="#666" stroke-width="2"/>
+  <text x="625" y="540" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">Sets (Unique Collections)</text>
+  <text x="625" y="565" font-family="Arial" font-size="11">- String Set (SS)</text>
+  <text x="625" y="580" font-family="Arial" font-size="11">- Number Set (NS)</text>
+  <text x="625" y="595" font-family="Arial" font-size="11">- Binary Set (BS)</text>
+
+  <!-- Storage Strategy -->
+  <polygon points="250,680 550,680 520,760 220,760" fill="#e1d5e7" stroke="#9673a6" stroke-width="2"/>
+  <text x="385" y="715" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">LOB Storage Pattern</text>
+  <text x="385" y="735" text-anchor="middle" font-family="Arial" font-size="11">Data &gt; 400KB → Store pointer to S3</text>
+
+  <!-- Flow Connections -->
+  <line x1="400" y1="420" x2="400" y2="460" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="175" y1="630" x2="385" y2="680" stroke="#666" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
+  <line x1="625" y1="630" x2="385" y2="680" stroke="#666" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
+
+  <!-- Legend -->
+  <rect x="580" y="350" width="180" height="70" fill="#f9f9f9" stroke="#ddd" />
+  <text x="590" y="370" font-family="Arial" font-size="11" font-weight="bold">Math Logic:</text>
+  <text x="590" y="385" font-family="Arial" font-size="11">- Key + Value = Cost</text>
+  <text x="590" y="400" font-family="Arial" font-size="11">- Use short names!</text>
+</svg>

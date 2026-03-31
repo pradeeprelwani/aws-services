@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 850">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#000" />
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="#f4f4f4"/>
+  <rect width="100%" height="50" fill="#232F3E"/>
+  <text x="20" y="32" font-family="Arial" font-size="20" fill="#ffffff" font-weight="bold">3. Operations: Streams vs Kinesis</text>
+
+  <!-- Data Mutation Entry -->
+  <rect x="300" y="80" width="200" height="60" rx="10" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="400" y="105" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">Data Mutation (T0)</text>
+  <text x="400" y="122" text-anchor="middle" font-family="Arial" font-size="11">(Insert / Update / Delete)</text>
+
+  <!-- Internal Log Router -->
+  <path d="M400,160 L580,230 L400,300 L220,170 Z" fill="#fff2cc" stroke="#d6b656" stroke-width="2" transform="translate(0,20)"/>
+  <text x="400" y="230" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Internal Log Router</text>
+  <text x="400" y="245" text-anchor="middle" font-family="Arial" font-size="11">Sequence Write to Commit Logs</text>
+  <line x1="400" y1="140" x2="400" y2="180" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Stream Sharding Logic -->
+  <rect x="300" y="350" width="200" height="70" fill="#f8cecc" stroke="#b85450" stroke-width="2"/>
+  <text x="400" y="380" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Shard Shaper</text>
+  <text x="400" y="395" text-anchor="middle" font-family="Arial" font-size="11">Ordered Event Distribution</text>
+  <line x1="400" y1="320" x2="400" y2="350" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Streaming Logic Container -->
+  <rect x="40" y="460" width="720" height="320" fill="none" stroke="#999" stroke-dasharray="5,5"/>
+  <text x="50" y="480" font-family="Arial" font-size="12" font-weight="bold" fill="#666">Change Data Capture (CDC) Layer</text>
+
+  <!-- DynamoDB Streams -->
+  <rect x="70" y="510" width="310" height="120" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="225" y="540" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">DDB Streams (Native)</text>
+  <text x="225" y="560" font-family="Arial" font-size="11">- 24h Retention</text>
+  <text x="225" y="575" font-family="Arial" font-size="11">- Sequential order per shard</text>
+  <text x="225" y="590" font-family="Arial" font-size="11">- Lambda direct integration</text>
+
+  <!-- Kinesis Data Streams -->
+  <rect x="420" y="510" width="310" height="120" fill="#f5f5f5" stroke="#666" stroke-width="2"/>
+  <text x="575" y="540" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">Kinesis Data Streams</text>
+  <text x="575" y="560" font-family="Arial" font-size="11">- Up to 1 year retention</text>
+  <text x="575" y="575" font-family="Arial" font-size="11">- Multi-consumer fan-out</text>
+  <text x="575" y="590" font-family="Arial" font-size="11">- Real-time SQL analytics</text>
+
+  <!-- Event Handler -->
+  <polygon points="250,680 550,680 520,760 220,760" fill="#e1d5e7" stroke="#9673a6" stroke-width="2"/>
+  <text x="385" y="715" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Downstream Consumers</text>
+  <text x="385" y="735" text-anchor="middle" font-family="Arial" font-size="11">Lambda / S3 / OpenSearch / SNS</text>
+  <line x1="225" y1="630" x2="385" y2="680" stroke="#666" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
+  <line x1="575" y1="630" x2="385" y2="680" stroke="#666" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
+
+  <!-- Legend -->
+  <rect x="580" y="350" width="180" height="70" fill="#f9f9f9" stroke="#ddd" />
+  <text x="590" y="370" font-family="Arial" font-size="11" font-weight="bold">Decision Criteria:</text>
+  <text x="590" y="385" font-family="Arial" font-size="11">- Streams: Short-term</text>
+  <text x="590" y="400" font-family="Arial" font-size="11">- Kinesis: Scale/History</text>
+</svg>
