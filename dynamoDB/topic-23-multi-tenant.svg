@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 850">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#000" />
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="#f4f4f4"/>
+  <rect width="100%" height="50" fill="#232F3E"/>
+  <text x="20" y="32" font-family="Arial" font-size="20" fill="#ffffff" font-weight="bold">23. Multi-Tenant Design (SaaS)</text>
+
+  <!-- Tenants (top) -->
+  <rect x="60" y="80" width="140" height="60" rx="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="130" y="107" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">Tenant A</text>
+  <text x="130" y="124" text-anchor="middle" font-family="Arial" font-size="10">(e.g. Netflix)</text>
+
+  <rect x="330" y="80" width="140" height="60" rx="8" fill="#fff2cc" stroke="#d6b656" stroke-width="2"/>
+  <text x="400" y="107" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">Tenant B</text>
+  <text x="400" y="124" text-anchor="middle" font-family="Arial" font-size="10">(e.g. Shopify store)</text>
+
+  <rect x="600" y="80" width="140" height="60" rx="8" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="670" y="107" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">Tenant C</text>
+  <text x="670" y="124" text-anchor="middle" font-family="Arial" font-size="10">(e.g. SaaS client)</text>
+
+  <!-- Single DynamoDB Table -->
+  <path d="M400,320 L580,390 L400,460 L220,330 Z" fill="#e1d5e7" stroke="#9673a6" stroke-width="2" transform="translate(0,20)"/>
+  <text x="400" y="380" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Single DynamoDB Table</text>
+  <text x="400" y="398" text-anchor="middle" font-family="Arial" font-size="11">All tenants share one table</text>
+
+  <line x1="130" y1="140" x2="310" y2="360" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="400" y1="140" x2="400" y2="340" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="670" y1="140" x2="490" y2="360" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Key Pattern Box -->
+  <rect x="40" y="510" width="720" height="80" rx="8" fill="#fff2cc" stroke="#d6b656" stroke-width="2"/>
+  <text x="400" y="538" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Key Design Pattern: Partition by Tenant</text>
+  <text x="400" y="558" text-anchor="middle" font-family="Arial" font-size="11">PK = TENANT#&lt;ID&gt;   |   SK = USER#&lt;ID&gt; or RESOURCE#&lt;ID&gt;</text>
+  <text x="400" y="578" text-anchor="middle" font-family="Arial" font-size="10" fill="#d6b656">All data for one tenant lands in the same partition group — fast, isolated queries</text>
+
+  <!-- Data Isolation -->
+  <rect x="40" y="640" width="340" height="100" rx="8" fill="#f8cecc" stroke="#b85450" stroke-width="2"/>
+  <text x="210" y="665" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">Data Isolation</text>
+  <text x="210" y="683" text-anchor="middle" font-family="Arial" font-size="10">IAM + LeadingKeys condition</text>
+  <text x="210" y="700" text-anchor="middle" font-family="Arial" font-size="10">ensures Tenant A cannot</text>
+  <text x="210" y="716" text-anchor="middle" font-family="Arial" font-size="10">access Tenant B's data</text>
+  <text x="210" y="733" text-anchor="middle" font-family="Arial" font-size="10" fill="#b85450">Security at the partition key level</text>
+
+  <!-- Query Efficiency -->
+  <rect x="420" y="640" width="340" height="100" rx="8" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="590" y="665" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">Query Efficiency</text>
+  <text x="590" y="683" text-anchor="middle" font-family="Arial" font-size="10">Query PK = TENANT#123</text>
+  <text x="590" y="700" text-anchor="middle" font-family="Arial" font-size="10">returns ALL resources for</text>
+  <text x="590" y="716" text-anchor="middle" font-family="Arial" font-size="10">that tenant in one call</text>
+  <text x="590" y="733" text-anchor="middle" font-family="Arial" font-size="10" fill="#82b366">Single-Table Design benefit</text>
+
+  <line x1="360" y1="480" x2="210" y2="640" stroke="#666" stroke-width="1" stroke-dasharray="4,2" marker-end="url(#arrow)"/>
+  <line x1="440" y1="480" x2="590" y2="640" stroke="#666" stroke-width="1" stroke-dasharray="4,2" marker-end="url(#arrow)"/>
+</svg>

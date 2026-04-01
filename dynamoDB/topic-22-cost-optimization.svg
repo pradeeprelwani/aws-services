@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 850">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#000" />
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="#f4f4f4"/>
+  <rect width="100%" height="50" fill="#232F3E"/>
+  <text x="20" y="32" font-family="Arial" font-size="20" fill="#ffffff" font-weight="bold">22. Cost Optimization</text>
+
+  <!-- Central Cost Dial -->
+  <ellipse cx="400" cy="175" rx="120" ry="60" fill="#fff2cc" stroke="#d6b656" stroke-width="2"/>
+  <text x="400" y="170" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">DynamoDB Cost</text>
+  <text x="400" y="188" text-anchor="middle" font-family="Arial" font-size="11">Avoid waste, optimize access</text>
+
+  <!-- Avoid Scans -->
+  <rect x="40" y="300" width="200" height="100" rx="8" fill="#f8cecc" stroke="#b85450" stroke-width="2"/>
+  <text x="140" y="328" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">Avoid Scans</text>
+  <text x="140" y="346" text-anchor="middle" font-family="Arial" font-size="10">Scan = reads ALL items</text>
+  <text x="140" y="362" text-anchor="middle" font-family="Arial" font-size="10">Billed for every read</text>
+  <text x="140" y="380" text-anchor="middle" font-family="Arial" font-size="10" fill="#b85450">Use Query instead</text>
+
+  <!-- Short Attribute Names -->
+  <rect x="300" y="300" width="200" height="100" rx="8" fill="#fff2cc" stroke="#d6b656" stroke-width="2"/>
+  <text x="400" y="328" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">Short Attr Names</text>
+  <text x="400" y="346" text-anchor="middle" font-family="Arial" font-size="10">Attr names count toward</text>
+  <text x="400" y="362" text-anchor="middle" font-family="Arial" font-size="10">400KB item limit</text>
+  <text x="400" y="380" text-anchor="middle" font-family="Arial" font-size="10" fill="#d6b656">u_id vs User_Identifier</text>
+
+  <!-- Optimize GSI -->
+  <rect x="560" y="300" width="200" height="100" rx="8" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="660" y="328" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">Optimize GSI</text>
+  <text x="660" y="346" text-anchor="middle" font-family="Arial" font-size="10">Project only needed attrs</text>
+  <text x="660" y="362" text-anchor="middle" font-family="Arial" font-size="10">KEYS_ONLY = cheapest</text>
+  <text x="660" y="380" text-anchor="middle" font-family="Arial" font-size="10" fill="#82b366">ALL = most expensive</text>
+
+  <line x1="340" y1="220" x2="180" y2="300" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="400" y1="235" x2="400" y2="300" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="460" y1="220" x2="620" y2="300" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Capacity Mode -->
+  <rect x="40" y="460" width="340" height="110" rx="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="210" y="485" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">Capacity Mode Selection</text>
+  <text x="210" y="503" text-anchor="middle" font-family="Arial" font-size="10">On-Demand: Pay per req, unpredictable traffic</text>
+  <text x="210" y="520" text-anchor="middle" font-family="Arial" font-size="10">Provisioned: Fixed RCU/WCU, steady traffic</text>
+  <text x="210" y="537" text-anchor="middle" font-family="Arial" font-size="10">Reserved: 1-3yr commit, 50-70% savings</text>
+  <text x="210" y="557" text-anchor="middle" font-family="Arial" font-size="11" fill="#6c8ebf" font-weight="bold">Right-size your capacity mode</text>
+
+  <!-- TTL & S3 offload -->
+  <rect x="420" y="460" width="340" height="110" rx="8" fill="#e1d5e7" stroke="#9673a6" stroke-width="2"/>
+  <text x="590" y="485" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">Storage Optimization</text>
+  <text x="590" y="503" text-anchor="middle" font-family="Arial" font-size="10">TTL: auto-delete stale items (free)</text>
+  <text x="590" y="520" text-anchor="middle" font-family="Arial" font-size="10">DAX: reduce RCU consumption</text>
+  <text x="590" y="537" text-anchor="middle" font-family="Arial" font-size="10">S3: offload large blobs (&gt;400KB)</text>
+  <text x="590" y="557" text-anchor="middle" font-family="Arial" font-size="11" fill="#9673a6" font-weight="bold">Keep items small</text>
+
+  <!-- Legend -->
+  <rect x="40" y="620" width="720" height="55" rx="6" fill="#f9f9f9" stroke="#ddd"/>
+  <text x="400" y="645" text-anchor="middle" font-family="Arial" font-size="11" font-weight="bold">Golden Rule: Design your access patterns first, then your keys. Every scan avoided = money saved.</text>
+  <text x="400" y="663" text-anchor="middle" font-family="Arial" font-size="10" fill="#666">BatchWriteItem (25/call) | BatchGetItem (100/call) | Projection Expressions to fetch only needed fields</text>
+</svg>

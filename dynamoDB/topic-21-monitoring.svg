@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 850">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#000" />
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="#f4f4f4"/>
+  <rect width="100%" height="50" fill="#232F3E"/>
+  <text x="20" y="32" font-family="Arial" font-size="20" fill="#ffffff" font-weight="bold">21. Monitoring &amp; Observability</text>
+
+  <!-- DynamoDB Table -->
+  <rect x="300" y="75" width="200" height="60" rx="10" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="400" y="102" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">DynamoDB Table</text>
+  <text x="400" y="119" text-anchor="middle" font-family="Arial" font-size="11">Emits CloudWatch Metrics</text>
+
+  <!-- CloudWatch -->
+  <path d="M400,260 L580,330 L400,400 L220,270 Z" fill="#fff2cc" stroke="#d6b656" stroke-width="2" transform="translate(0,20)"/>
+  <text x="400" y="315" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Amazon CloudWatch</text>
+  <text x="400" y="330" text-anchor="middle" font-family="Arial" font-size="11">Metrics + Alarms + Dashboards</text>
+  <line x1="400" y1="135" x2="400" y2="280" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Key Metrics -->
+  <rect x="40" y="440" width="200" height="90" rx="8" fill="#f8cecc" stroke="#b85450" stroke-width="2"/>
+  <text x="140" y="462" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">ThrottledRequests</text>
+  <text x="140" y="480" text-anchor="middle" font-family="Arial" font-size="10">Requests rejected</text>
+  <text x="140" y="495" text-anchor="middle" font-family="Arial" font-size="10">by DynamoDB</text>
+  <text x="140" y="515" text-anchor="middle" font-family="Arial" font-size="10" fill="#b85450">Hot Partition signal</text>
+
+  <rect x="300" y="440" width="200" height="90" rx="8" fill="#fff2cc" stroke="#d6b656" stroke-width="2"/>
+  <text x="400" y="462" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">ConsumedCapacity</text>
+  <text x="400" y="480" text-anchor="middle" font-family="Arial" font-size="10">RCU / WCU usage</text>
+  <text x="400" y="495" text-anchor="middle" font-family="Arial" font-size="10">vs. provisioned</text>
+  <text x="400" y="515" text-anchor="middle" font-family="Arial" font-size="10" fill="#d6b656">Capacity signal</text>
+
+  <rect x="560" y="440" width="200" height="90" rx="8" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="660" y="462" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">SuccessfulRequests</text>
+  <text x="660" y="480" text-anchor="middle" font-family="Arial" font-size="10">Latency &amp; count</text>
+  <text x="660" y="495" text-anchor="middle" font-family="Arial" font-size="10">of completed ops</text>
+  <text x="660" y="515" text-anchor="middle" font-family="Arial" font-size="10" fill="#82b366">Health signal</text>
+
+  <line x1="330" y1="420" x2="180" y2="440" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="400" y1="420" x2="400" y2="440" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="470" y1="420" x2="620" y2="440" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Alert Flow -->
+  <rect x="40" y="580" width="720" height="60" rx="8" fill="#e1d5e7" stroke="#9673a6" stroke-width="2"/>
+  <text x="400" y="608" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">Alarm Flow: Threshold Breach</text>
+  <text x="400" y="628" text-anchor="middle" font-family="Arial" font-size="11">CloudWatch Alarm -> SNS Notification -> Auto Scaling Action</text>
+
+  <line x1="140" y1="530" x2="200" y2="580" stroke="#666" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
+  <line x1="400" y1="530" x2="400" y2="580" stroke="#666" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
+  <line x1="660" y1="530" x2="600" y2="580" stroke="#666" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
+
+  <!-- Contributor Insights -->
+  <rect x="270" y="690" width="260" height="70" rx="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="400" y="720" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">Contributor Insights</text>
+  <text x="400" y="738" text-anchor="middle" font-family="Arial" font-size="10">Identify hottest Partition Keys in real-time</text>
+  <line x1="400" y1="640" x2="400" y2="690" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Legend -->
+  <rect x="580" y="310" width="180" height="70" fill="#f9f9f9" stroke="#ddd" />
+  <text x="590" y="330" font-family="Arial" font-size="11" font-weight="bold">Thresholds:</text>
+  <text x="590" y="345" font-family="Arial" font-size="10">- 60%: Normal (OK)</text>
+  <text x="590" y="360" font-family="Arial" font-size="10">- 85%: Warning</text>
+  <text x="590" y="375" font-family="Arial" font-size="10">- 100%+: Throttle/Fail</text>
+</svg>
