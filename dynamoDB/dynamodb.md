@@ -67,11 +67,11 @@ GAC is the entry point of the DynamoDB fleet. It acts like a gatekeeper for inte
     ```text
     Your API Request
         ->
-    Global Admission Control (GAC) ðŸ›¡ï¸ (Step 1)
+    Global Admission Control (GAC) (Step 1)
         ->
-    Partitioning / Hashing ðŸ—ºï¸ (Step 2)
+    Partitioning / Hashing (Step 2)
         ->
-    Physical Nodes ðŸ'¾ (Step 3)
+  Physical Nodes (Step 3)
     ```
 
 ### 1.2 Adaptive Capacity & Bursting
@@ -549,7 +549,7 @@ In the AWS Console:
     Note : As per second Request both db has name = "Pradeep kumar"
     ```
 
-- ** Problem (late retry comes back)**
+- **Problem (late retry comes back)**
 
     ```text
     Retry old request (Request 1):
@@ -793,12 +793,12 @@ Instead of giving up or trying again immediately, you should use a smart retry p
     Example
 
     ```text
-    1000 requests fail at same time
-    ->
+    1000 requests fail at the same time
+        ->
     All retry after 1 second
-    ->
-    DB gets 1000 requests again ðŸ'¥
-    ->
+        ->
+    DB gets 1000 requests again
+        ->
     Fails again -> repeat cycle
     ```
 
