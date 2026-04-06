@@ -290,6 +290,7 @@ async function secureDatabaseOperations() {
 ```
 
 [Read More](./topic-4-resource-policies.svg)
+
 ---
 
 ## 5. Advanced TTL (Time to Live) Mechanics
@@ -343,7 +344,8 @@ It is important to understand the nature of the streaming capability to use it e
 - **Activation:** It must be enabled at the table level, where you can choose what information is written to the stream (e.g., Keys only, New Image, Old Image, or both).
 - **Functionality:** Once enabled, it automatically records a time-ordered sequence of every item-level modification (**Create**, **Update**, **Delete**) in the table for up to 24 hours.
 
-[Read More](./topic-5-ttl-workflow.svg)
+  [Read More](./topic-5-ttl-workflow.svg)
+
 ---
 
 ## 6. The "Filter Expression" Efficiency Trap
@@ -398,7 +400,8 @@ If you need to query by status across many different users simultaneously, creat
 
 **Result:** When you query `status = DELIVERED` on the GSI, DynamoDB only touches the data that matches that status. There is zero waste, and you only pay for the items you actually retrieve.
 
-[Read More](./topic-6-filter-trap.svg)
+  [Read More](./topic-6-filter-trap.svg)
+
 ---
 
 ## 7. Write Sharding (For Ultra-Hot Keys)
@@ -446,7 +449,8 @@ Instead of one overloaded key, the load is split across multiple shards:
 
 - **Shard Count:** Choose a shard count that comfortably covers your peak traffic. If you expect 5,000 writes/sec, use at least 6â€"10 shards to provide a safety buffer against unexpected spikes.
 
-[Read More](./topic-7-write-sharding.svg)
+  [Read More](./topic-7-write-sharding.svg)
+
 ---
 
 ## 8. Enterprise Import/Export Patterns
@@ -510,6 +514,7 @@ In the AWS Console:
 
 
 [Read More](./topic-8-import-export.svg)
+
 ---
 
 ## 9. Zero-Downtime Migration: "The Drift"
@@ -623,6 +628,7 @@ async function safeMigrate(userData: any) {
 ```
 
 [Read More](./topic-9-migration-drift.svg)
+
 ---
 
 ## 10. SQL to DynamoDB Migration Strategy
@@ -674,6 +680,7 @@ Handle this in 3 steps:
 | **New Queries** | Easy to add anytime. | Requires careful planning or a New Index (GSI). |
 
 [Read More](./topic-10-sql-to-ddb.svg)
+
 ---
 
 ## 11. DynamoDB Performance Optimization (100K Records)
@@ -693,6 +700,7 @@ Handle this in 3 steps:
 | 11 | Data Fetching | Use pagination (LastEvaluatedKey) | Fetch huge data (100k) in one request |
 
 [Read More](./topic-11-performance-optimization.svg)
+
 ---
 
 ## 12. Consistency Models
@@ -711,6 +719,7 @@ DynamoDB replicates data across three facilities (Availability Zones). How you r
 **Expert Advice:** Use strongly consistent reads only for critical paths like financial ledger balances or inventory locks.
 
 [Read More](./topic-12-consistency-models.svg)
+
 ---
 
 ## 13. Conditional Writes & Optimistic Locking
@@ -764,6 +773,7 @@ The rule looks like this: `attribute_not_exists(PK) OR version = :expectedVersio
 - It keeps your data safe without slowing down the system too much.
 
 [Read More](./topic-13-conditional-writes.svg)
+
 ---
 
 ## 14. Error Handling & Retry Strategy
@@ -814,6 +824,7 @@ If a thousand computers all try to fix the error at the exact same second, they 
 - **With a Retry:** Your system stays strong and keeps working even when things get busy.
 
 [Read More](./topic-14-error-handling.svg)
+
 ---
 
 ## 15. Pagination in DynamoDB
@@ -847,6 +858,7 @@ To get the next set of data, you use two special labels:
 - **Better Control:** You can show the user 10 items at a time instead of 1,000.
 
 [Read More](./topic-15-pagination.svg)
+
 ---
 
 ## 16. Data Types & Limits
@@ -859,6 +871,7 @@ To get the next set of data, you use two special labels:
 - **Sets:** String Set, Number Set, Binary Set (unique values only).
 
 [Read More](./topic-16-data-types.svg)
+
 ---
 
 ## 17. Secondary Index Comparison (LSI vs GSI)
@@ -905,6 +918,7 @@ To get the next set of data, you use two special labels:
 Request increase to 25 (or more)`
 
 [Read More](./topic-17-lsi-gsi-comparison.svg)
+
 ---
 
 ## 18. PartiQL (SQL-like Queries)
@@ -918,6 +932,7 @@ DynamoDB supports **PartiQL**, a SQL-compatible query language.
 **Where to run PartiQL?**
 > AWS Console > DynamoDB > PartiQL editor
 [Read More](./topic-18-partiql.svg)
+
 ---
 
 ## 19. Backup & Restore
@@ -999,6 +1014,7 @@ DynamoDB supports **PartiQL**, a SQL-compatible query language.
 | **Automation** | You must do it manually | It works automatically |
 
 [Read More](./topic-19-backup-restore.svg)
+
 ---
 
 ## 20. IAM & Access Control
@@ -1079,6 +1095,7 @@ Must explicitly request allowed attributes
     ```
 
 [Read More](./topic-20-iam-access.svg)
+
 ---
 
 ## 21. Monitoring & Observability
@@ -1147,6 +1164,7 @@ Use **Amazon CloudWatch** to track health:
     - Zero / minimal downtime 
 
 [Read More](./topic-21-monitoring.svg)
+
 ---
 
 ## 22. Cost Optimization
@@ -1182,6 +1200,7 @@ Use **Amazon CloudWatch** to track health:
         - 3 GSIs + Large attributes = Cost multiplies 3x+
   
 [Read More](./topic-22-cost-optimization.svg)
+
 ---
 
 ## 23. Multi-Tenant Design (SaaS) 
@@ -1214,6 +1233,7 @@ Use **Amazon CloudWatch** to track health:
 - **Result:** Ensures data isolation and allows for efficient querying of all data belonging to a specific customer.
 
 [Read More](./topic-23-multi-tenant.svg)
+
 ---
 
 ## 24. Time-Series Pattern: 
@@ -1243,6 +1263,7 @@ AND SK BETWEEN "10:00" AND "10:10" ```.
       | **4. Infrastructure Complexity** | You handle: <br> • Scaling <br> • Partitioning <br> • Replication | Fully managed: <br> • Auto scaling |
 
 [Read More](./topic-24-time-series.svg)
+
 ---
 
 
