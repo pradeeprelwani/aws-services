@@ -112,6 +112,7 @@ Once a request passes GAC, DynamoDB must find the physical location of the data.
 - DynamoDB uses B-Tree on Sort Key to quickly find ordered data inside a partition without scanning
 
 [Read More](./topic-1-arch-internals.svg)
+
 ---
 
 ## 2. Advanced Data Modeling (The "No-Join" Philosophy)
@@ -123,6 +124,7 @@ Once a request passes GAC, DynamoDB must find the physical location of the data.
 - **Sparse Indexes:** By only populating a GSI attribute for specific items, you create a "Sparse Index." This is ideal for "Needle in a Haystack" queries, such as finding only the "In-Progress" orders out of millions of "Completed" ones.
 
 [Read More](./topic-2-advanced-modeling.svg)
+
 ---
 
 ## 3. Operations & Performance at Scale
@@ -203,6 +205,7 @@ While powerful, DAX is not a "one-size-fits-all" solution. Avoid DAX if:
 - **Frequently Changing Data:** If your data expires or changes every few seconds, the cache churn (constant invalidation and reloading) can negate the performance benefits.
 
 [Read More](./topic-3-operations-streams.svg)
+
 ---
 
 ## 4. Advanced Security & Governance
@@ -344,7 +347,7 @@ It is important to understand the nature of the streaming capability to use it e
 - **Activation:** It must be enabled at the table level, where you can choose what information is written to the stream (e.g., Keys only, New Image, Old Image, or both).
 - **Functionality:** Once enabled, it automatically records a time-ordered sequence of every item-level modification (**Create**, **Update**, **Delete**) in the table for up to 24 hours.
 
-  [Read More](./topic-5-ttl-workflow.svg)
+[Read More](./topic-5-ttl-workflow.svg)
 
 ---
 
@@ -400,7 +403,7 @@ If you need to query by status across many different users simultaneously, creat
 
 **Result:** When you query `status = DELIVERED` on the GSI, DynamoDB only touches the data that matches that status. There is zero waste, and you only pay for the items you actually retrieve.
 
-  [Read More](./topic-6-filter-trap.svg)
+[Read More](./topic-6-filter-trap.svg)
 
 ---
 
@@ -449,7 +452,7 @@ Instead of one overloaded key, the load is split across multiple shards:
 
 - **Shard Count:** Choose a shard count that comfortably covers your peak traffic. If you expect 5,000 writes/sec, use at least 6â€"10 shards to provide a safety buffer against unexpected spikes.
 
-  [Read More](./topic-7-write-sharding.svg)
+[Read More](./topic-7-write-sharding.svg)
 
 ---
 
@@ -1285,7 +1288,7 @@ AND SK BETWEEN "10:00" AND "10:10" ```.
     ```
 - **Recreate Table:** If deleting nearly all data, it's often faster/cheaper to export the small portion you need and drop the table.
 
-  [Read More](./topic-25-delete-strategy.svg)
+[Read More](./topic-25-delete-strategy.svg)
 
 ---
 
@@ -1342,7 +1345,7 @@ AND SK BETWEEN "10:00" AND "10:10" ```.
     });
     ```
 
-  [Read More](./topic-26-sdk-best-practices.svg)
+[Read More](./topic-26-sdk-best-practices.svg)
 
 ---
 
@@ -1410,7 +1413,7 @@ AND SK BETWEEN "10:00" AND "10:10" ```.
     ```
   
 
-  [Read More](./topic-28-security.svg)
+[Read More](./topic-28-security.svg)
 
 ---
 
