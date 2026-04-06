@@ -7,7 +7,7 @@ To master DynamoDB at a 10-year experience level, you must move beyond CRUD and 
 
 ---
 
-## ðŸ“‘ Table of Contents
+##  Table of Contents
 
 1. [Architectural Internals](#1-architectural-internals)
    - [Global Admission Control](#11-global-admission-control-gac)
@@ -38,24 +38,18 @@ To master DynamoDB at a 10-year experience level, you must move beyond CRUD and 
 23. [Multi-Tenant Design](#23-multi-tenant-design-saas)
 24. [Time-Series](#24-time-series-pattern)
 25. [Large Delete](#25-large-scale-delete-strategy)
-26. [Anti-Patterns](#26-anti-patterns-avoid-these)
-27. [SDK Best Practices](#27-sdk-best-practices)
-28. [Security](#28-security-overview)
-29. [Adaptive Capacity](#29-adaptive-capacity)
-30. [Hot Partition Detection](#30-hot-partition-detection)
-31. [Retry Strategy](#31-retry-strategy-exponential-backoff--jitter)
-32. [Idempotency Keys](#32-idempotency-keys)
-33. [Data Modeling Patterns](#33-data-modeling-patterns)
-34. [Event-Driven Architecture](#34-event-driven-architecture-streams)
-35. [Global Tables](#35-global-tables-conflict-resolution)
-36. [Capacity Planning](#36-capacity-planning)
-37. [Latency Optimization](#37-latency-optimization)
-38. [Schema Evolution](#38-schema-evolution)
-39. [Disaster Recovery](#39-disaster-recovery-dr)
-40. [Data Migration](#40-data-migration-strategy)
-41. [Write & Read Amplification](#41-write--read-amplification)
-42. [Index Projections](#42-secondary-index-projections)
-43. [Distributed Systems Thinking](#43-distributed-system-thinking)
+26. [SDK Best Practices](#26-sdk-best-practices)
+27. [Security](#27-security-overview)
+28. [Idempotency Keys](#28-idempotency-keys)
+29. [Data Modeling Patterns](#29-data-modeling-patterns)
+30. [Global Tables](#30-global-tables-conflict-resolution)
+31. [Latency Optimization](#31-latency-optimization)
+32. [Schema Evolution](#32-schema-evolution)
+33. [Disaster Recovery](#33-disaster-recovery-dr)
+34. [Data Migration](#34-data-migration-strategy)
+35. [Write & Read Amplification](#35-write--read-amplification)
+36. [Index Projections](#36-secondary-index-projections)
+37. [Distributed Systems Thinking](#37-distributed-system-thinking)
 
 ---
 
@@ -117,18 +111,18 @@ Once a request passes GAC, DynamoDB must find the physical location of the data.
 - Within each partition, the **Sort Key (SK)** is physically stored in a B-Tree structure. This enables high-performance range queries using operators like `begins_with`, `between`, and comparison operators (`>`, `<`).
 - DynamoDB uses B-Tree on Sort Key to quickly find ordered data inside a partition without scanning
 
-[Read More](./topic-1-arch-internals.svg)
+  [Read More](./topic-1-arch-internals.svg)
 ---
 
 ## 2. Advanced Data Modeling (The "No-Join" Philosophy)
 
 - **Single-Table Design:** The practice of storing multiple distinct entity types (e.g., Users, Orders, Products) in a single table. This allows you to retrieve all related data for a complex access pattern in a single atomic `Query` call.
-- **Adjacency Lists:** A technique for modeling many-to-many ($N:M$) relationships. By using a "Global Secondary Index (GSI) Flip"â€”where the original SK becomes the PKâ€”you can query relationships from both directions.
+- **Adjacency Lists:** A technique for modeling many-to-many ($N:M$) relationships. By using a "Global Secondary Index (GSI) Flip, where the original SK becomes the PK, you can query relationships from both directions.
 - **GSI Overloading:** A strategy to stay under the GSI limit (20 per table) by using generic attribute names (e.g., `GSI1_PK`, `GSI1_SK`). This allows a single index to serve different purposes for different entity types.
 
 - **Sparse Indexes:** By only populating a GSI attribute for specific items, you create a "Sparse Index." This is ideal for "Needle in a Haystack" queries, such as finding only the "In-Progress" orders out of millions of "Completed" ones.
 
-[Read More](./topic-2-advanced-modeling.svg)
+  [Read More](./topic-2-advanced-modeling.svg)
 ---
 
 ## 3. Operations & Performance at Scale
@@ -139,6 +133,14 @@ When data changes in DynamoDB (insert/update/delete), you can trigger downstream
 
 - **DynamoDB Streams:** Use for Lambda triggers and short-term event processing.
   - *Example:* User creates order -> Stream records event -> Lambda processes event -> Sends confirmation email.
+  ```json
+  {
+    "eventName": "INSERT",
+    "Keys": { "userId": "123" },
+    "OldImage": null,
+    "NewImage": { "name": "Pradeep" }
+  }
+  ```
 
 - **Amazon Kinesis Data Streams:** Better for long-term retention, real-time analytics, and multiple consumers.
   - *Example:* Orders -> Kinesis -> Analytics system + Fraud detection + Real-time Dashboard.
@@ -170,11 +172,11 @@ Provides multi-region replication and conflict resolution.
 
 1. **On-Demand:** You pay per request. Best for unpredictable traffic or new applications.
 2. **Provisioned Capacity:** You define specific RCU/WCU limits. More cost-effective for predictable, steady-state traffic.
-3. **Reserved Capacity:** Commit to a baseline usage over a 1 or 3-year term for a **50â€“70% cost reduction**.
+3. **Reserved Capacity:** Commit to a baseline usage over a 1 or 3-year term for a **50â€"70% cost reduction**.
 
 ### 3.5 DAX (DynamoDB Accelerator)
 
-DAX is a fully managed, highly available, in-memory cache for DynamoDB that delivers up to a 10x performance improvementâ€”reducing response times from milliseconds to **microseconds**, even at millions of requests per second.
+DAX is a fully managed, highly available, in-memory cache for DynamoDB that delivers up to a 10x performance improvementâ€"reducing response times from milliseconds to **microseconds**, even at millions of requests per second.
 
 #### Architectural Integration
 
@@ -200,7 +202,7 @@ While powerful, DAX is not a "one-size-fits-all" solution. Avoid DAX if:
 - **Cost Sensitivity:** DAX is an additional provisioned resource (clusters of nodes). If millisecond latency (standard DynamoDB) is sufficient for your SLA, the extra cost of a DAX cluster may not be justified.
 - **Frequently Changing Data:** If your data expires or changes every few seconds, the cache churn (constant invalidation and reloading) can negate the performance benefits.
 
-[Read More](./topic-3-operations-streams.svg)
+  [Read More](./topic-3-operations-streams.svg)
 ---
 
 ## 4. Advanced Security & Governance
@@ -286,8 +288,7 @@ async function secureDatabaseOperations() {
     }
 }
 ```
-
-[Read More](./topic-4-resource-policies.svg)
+  [Read More](./topic-4-resource-policies.svg)
 ---
 
 ## 5. Advanced TTL (Time to Live) Mechanics
@@ -301,14 +302,14 @@ TTL is a background process and does not guarantee that an item will be deleted 
 - **Timeline:** DynamoDB typically removes expired items within a **48-hour window** from the expiration time.
 - **Constraints:** You can designate only **one** TTL attribute per table.
 - **Configuration Details:**
-  - â›” The 48-hour window is **NOT** configurable by the user.
-  - â›” Deletion is **NOT** guaranteed to happen exactly at the 48-hour mark; it depends on table traffic and system resources.
+  - â›" The 48-hour window is **NOT** configurable by the user.
+  - â›" Deletion is **NOT** guaranteed to happen exactly at the 48-hour mark; it depends on table traffic and system resources.
   - It is a **best-effort** background process managed internally by AWS.
 
 > **Expert Tip:** To ensure users never see expired data during the 48-hour deletion lag, always include a filter in your application queries (e.g., using a Filter Expression) to ignore items where `ExpirationTime < CurrentTime`.
 ### Enabling TTL on a Table
 
-To use TTL, you must explicitly enable it and designate a specific attributeâ€”formatted as a **Unix Epoch timestamp** in secondsâ€”for DynamoDB to monitor.
+To use TTL, you must explicitly enable it and designate a specific attribute formatted as a Unix epoch timestamp in seconds for DynamoDB to monitor.
 
 **How to Enable (AWS Console):**
 
@@ -341,7 +342,7 @@ It is important to understand the nature of the streaming capability to use it e
 - **Activation:** It must be enabled at the table level, where you can choose what information is written to the stream (e.g., Keys only, New Image, Old Image, or both).
 - **Functionality:** Once enabled, it automatically records a time-ordered sequence of every item-level modification (**Create**, **Update**, **Delete**) in the table for up to 24 hours.
 
-[Read More](./topic-5-ttl-workflow.svg)
+  [Read More](./topic-5-ttl-workflow.svg)
 ---
 
 ## 6. The "Filter Expression" Efficiency Trap
@@ -396,7 +397,7 @@ If you need to query by status across many different users simultaneously, creat
 
 **Result:** When you query `status = DELIVERED` on the GSI, DynamoDB only touches the data that matches that status. There is zero waste, and you only pay for the items you actually retrieve.
 
-[Read More](./topic-6-filter-trap.svg)
+  [Read More](./topic-6-filter-trap.svg)
 ---
 
 ## 7. Write Sharding (For Ultra-Hot Keys)
@@ -421,7 +422,7 @@ Imagine storing users with a generic status as the Partition Key:
 
 ### The Strategy: Adding Entropy (Sharding)
 
-To solve this, you distribute the load by appending a random suffixâ€”a **shard**â€”to the Partition Key. This forces DynamoDB to spread the data across multiple underlying physical partitions.
+To solve this, you distribute the load by appending a random suffix a shard to the Partition Key. This forces DynamoDB to spread the data across multiple underlying physical partitions.
 
 #### Implementation Logic
 
@@ -442,9 +443,9 @@ Instead of one overloaded key, the load is split across multiple shards:
 
 - **Reading Sharded Data:** When you need to retrieve all "ACTIVE" users, your application must perform parallel queries across all shards (`ACTIVE#1` through `ACTIVE#N`) and merge the results in the application layer.
 
-- **Shard Count:** Choose a shard count that comfortably covers your peak traffic. If you expect 5,000 writes/sec, use at least 6â€“10 shards to provide a safety buffer against unexpected spikes.
+- **Shard Count:** Choose a shard count that comfortably covers your peak traffic. If you expect 5,000 writes/sec, use at least 6â€"10 shards to provide a safety buffer against unexpected spikes.
 
-[Read More](./topic-7-write-sharding.svg)
+  [Read More](./topic-7-write-sharding.svg)
 ---
 
 ## 8. Enterprise Import/Export Patterns
@@ -506,7 +507,7 @@ In the AWS Console:
 4. **Retrieval:** OpenSearch returns the matching record ("Pradeep") based on relevance.
 5. **Response:** The UI displays the correct result to the user.
 
-[Read More](./topic-8-import-export.svg)
+  [Read More](./topic-8-import-export.svg)
 ---
 
 ## 9. Zero-Downtime Migration: "The Drift"
@@ -565,7 +566,7 @@ In the AWS Console:
     -> ONLY IF current version = 1
 
     5. DB checks condition:
-    âœ” If version = 1 -> Update succeeds
+    âœ" If version = 1 -> Update succeeds
      If version â‰  1 -> Reject update
     
     Note : We update data only if the version matches, so outdated requests can't overwrite newer data.
@@ -619,7 +620,7 @@ async function safeMigrate(userData: any) {
 }
 ```
 
-[Read More](./topic-9-migration-drift.svg)
+  [Read More](./topic-9-migration-drift.svg)
 ---
 
 ## 10. SQL to DynamoDB Migration Strategy
@@ -670,7 +671,7 @@ Handle this in 3 steps:
 | **Scaling** | Vertical (Bigger Servers). | Horizontal (More Partitions). |
 | **New Queries** | Easy to add anytime. | Requires careful planning or a New Index (GSI). |
 
-[Read More](./topic-10-sql-to-ddb.svg)
+  [Read More](./topic-10-sql-to-ddb.svg)
 ---
 
 ## 11. DynamoDB Performance Optimization (100K Records)
@@ -689,7 +690,7 @@ Handle this in 3 steps:
 | 10 | Processing Logic | Use async (Streams + Lambda) | Do heavy work inside API |
 | 11 | Data Fetching | Use pagination (LastEvaluatedKey) | Fetch huge data (100k) in one request |
 
-[Read More](./topic-11-performance-optimization.svg)
+  [Read More](./topic-11-performance-optimization.svg)
 ---
 
 ## 12. Consistency Models
@@ -707,7 +708,7 @@ DynamoDB replicates data across three facilities (Availability Zones). How you r
 
 **Expert Advice:** Use strongly consistent reads only for critical paths like financial ledger balances or inventory locks.
 
-[Read More](./topic-12-consistency-models.svg)
+  [Read More](./topic-12-consistency-models.svg)
 ---
 
 ## 13. Conditional Writes & Optimistic Locking
@@ -760,7 +761,7 @@ The rule looks like this: `attribute_not_exists(PK) OR version = :expectedVersio
 - It ensures that only the latest and most correct version of the data is saved.
 - It keeps your data safe without slowing down the system too much.
 
-[Read More](./topic-13-conditional-writes.svg)
+  [Read More](./topic-13-conditional-writes.svg)
 ---
 
 ## 14. Error Handling & Retry Strategy
@@ -810,10 +811,10 @@ If a thousand computers all try to fix the error at the exact same second, they 
 
 - **With a Retry:** Your system stays strong and keeps working even when things get busy.
 
-[Read More](./topic-14-error-handling.svg)
+  [Read More](./topic-14-error-handling.svg)
 ---
 
-## Pagination in DynamoDB
+## 15. Pagination in DynamoDB
 
 ### The 1MB Limit
 
@@ -843,7 +844,7 @@ To get the next set of data, you use two special labels:
 - **Faster Response:** Small "pages" of data travel faster over the internet than one giant file.
 - **Better Control:** You can show the user 10 items at a time instead of 1,000.
 
-[Read More](./topic-15-pagination.svg)
+  [Read More](./topic-15-pagination.svg)
 ---
 
 ## 16. Data Types & Limits
@@ -855,7 +856,7 @@ To get the next set of data, you use two special labels:
 - **Documents:** **Map** (JSON-like objects) and **List** (ordered arrays).
 - **Sets:** String Set, Number Set, Binary Set (unique values only).
 
-[Read More](./topic-16-data-types.svg)
+  [Read More](./topic-16-data-types.svg)
 ---
 
 ## 17. Secondary Index Comparison (LSI vs GSI)
@@ -901,7 +902,7 @@ To get the next set of data, you use two special labels:
 - To increase GSI  `Go to AWS Service Quotas >
 Request increase to 25 (or more)`
 
-[Read More](./topic-17-lsi-gsi-comparison.svg)
+  [Read More](./topic-17-lsi-gsi-comparison.svg)
 ---
 
 ## 18. PartiQL (SQL-like Queries)
@@ -916,7 +917,7 @@ Where to run PartiQL?
 >AWS Console > DynamoDB >  PartiQL editor > Write query like:
 >AWS Console > DynamoDB >  PartiQL editor > Write query like:View Topic 18: PartiQL (SQL-like Queries)
 
-[Read More](./topic-18-partiql.svg)
+  [Read More](./topic-18-partiql.svg)
 ---
 
 ## 19. Backup & Restore
@@ -997,7 +998,7 @@ Where to run PartiQL?
 | **Best for** | Long-term storage and audits | Recovery from sudden mistakes |
 | **Automation** | You must do it manually | It works automatically |
 
-[Read More](./topic-19-backup-restore.svg)
+  [Read More](./topic-19-backup-restore.svg)
 ---
 
 ## 20. IAM & Access Control
@@ -1077,7 +1078,7 @@ Must explicitly request allowed attributes
     }
     ```
 
-[Read More](./topic-20-iam-access.svg)
+  [Read More](./topic-20-iam-access.svg)
 ---
 
 ## 21. Monitoring & Observability
@@ -1145,7 +1146,7 @@ Use **Amazon CloudWatch** to track health:
     - Automatic recovery 
     - Zero / minimal downtime 
 
-[Read More](./topic-21-monitoring.svg)
+  [Read More](./topic-21-monitoring.svg)
 ---
 
 ## 22. Cost Optimization
@@ -1180,8 +1181,7 @@ Use **Amazon CloudWatch** to track health:
         - If GSI has more attributes: More data written, More WCU consumed
         - 3 GSIs + Large attributes = Cost multiplies 3x+
   
-
-[Read More](./topic-22-cost-optimization.svg)
+  [Read More](./topic-22-cost-optimization.svg)
 ---
 
 ## 23. Multi-Tenant Design (SaaS) 
@@ -1213,7 +1213,7 @@ Use **Amazon CloudWatch** to track health:
   
 - **Result:** Ensures data isolation and allows for efficient querying of all data belonging to a specific customer.
 
-[Read More](./topic-23-multi-tenant.svg)
+  [Read More](./topic-23-multi-tenant.svg)
 ---
 
 ## 24. Time-Series Pattern: 
@@ -1237,129 +1237,322 @@ AND SK BETWEEN "10:00" AND "10:10" ```.
 
       | Aspect | 🟦 SQL | 🟩 DynamoDB |
       |--------|--------|------------|
-      | **1. Storage & Access Pattern** | Data stored in tables (rows) <br> Index is a separate structure | Data stored using PK + SK <br> Physically organized by PK and sorted by SK <br> 👉 No extra index needed for many queries |
-      | **2. Performance at Scale** | Works great at normal scale <br> At huge scale: <br> • Index scans <br> • Disk I/O <br> • Sharding complexity | Built for massive scale: <br> • Millions of writes/sec <br> • Massive time-series data <br> 👉 Direct partition lookup + sorted range scan (very fast) |
+      | **1. Storage & Access Pattern** | Data stored in tables (rows) <br> Index is a separate structure | Data stored using PK + SK <br> Physically organized by PK and sorted by SK <br>  No extra index needed for many queries |
+      | **2. Performance at Scale** | Works great at normal scale <br> At huge scale: <br> • Index scans <br> • Disk I/O <br> • Sharding complexity | Built for massive scale: <br> • Millions of writes/sec <br> • Massive time-series data <br>  Direct partition lookup + sorted range scan (very fast) |
       | **3. Write Pattern (VERY IMPORTANT)** | Writes can cause: <br> • Locks <br> • Index updates <br> • Contention | Append-only pattern: <br> • S1 → 10:00 <br> • S1 → 10:05 <br> • S1 → 10:10 <br> ✔️ No locks <br> ✔️ No joins <br> ✔️ Highly scalable |
       | **4. Infrastructure Complexity** | You handle: <br> • Scaling <br> • Partitioning <br> • Replication | Fully managed: <br> • Auto scaling |
 
-[Read More](./topic-24-time-series.svg)
+  [Read More](./topic-24-time-series.svg)
 ---
 
-<!--  UNDER PROCESS — hidden from render, do not delete
+
 
 ## 25. Large-Scale Delete Strategy
 
 - **Batch Delete:** Use `BatchWriteItem` (25 items per call).
 
 - **Parallel Processing:** Run multiple threads to scan and delete.
+  - DynamoDB does NOT allow bulk delete in one go
+  - You can only delete max 25 items per API call using BatchWriteItem
+  - Run multiple workers/threads
+  - Each worker deletes different batches
+    ```
+    Example:
+    Worker 1 → deletes items 1–1000
+    Worker 2 → deletes items 1001–2000 
+    Worker 3 → deletes items 2001–3000  
+    ```
 - **Recreate Table:** If deleting nearly all data, it's often faster/cheaper to export the small portion you need and drop the table.
--
+
+  [Read More](./topic-25-delete-strategy.svg)
 
 ---
 
-## 26. Anti-Patterns (Avoid These)
-
--  **Full Table Scans:** Extremely expensive and slow at scale.
-
--  **Low Cardinality PKs:** Using "Status" as a PK leads to **Hot Partitions**.
--  **Large Items:** Frequently reading/writing 400KB items will exhaust your WCU/RCU quickly.
-
----
-
-## 27. SDK Best Practices
+## 26. SDK Best Practices
 
 - **Connection Reuse:** Use a persistent HTTP connection to avoid TLS handshake overhead.
+  - What is "Connection Reuse"?
+    - When your Node.js app calls DynamoDB, it communicates over HTTPS.
+    - Every request needs:
+      - TCP connection
+      - TLS handshake (security setup )
+      - Then actual API call
+
+  - Without connection reuse:
+    - New connection for every request
+    - Slow
+    - Wastes resources
+
+    - **Request Example**
+      - Request 1 → Open connection → TLS handshake → Close
+      - Request 2 → Open connection → TLS handshake → Close
+      - Request 3 → Open connection → TLS handshake → Close
+    - **Problem**
+      - TLS handshake is expensive (time + CPU)
+      - Adds latency (~50–200ms per request)
+      - Wastes resources
+
+  - With connection reuse:
+    - Same connection for multiple requests
+    - Fast
+    - Efficient
+
+    - **Request Example**
+      - Request 1 → Use connection → Keep open
+      - Request 2 → Use same connection
+      - Request 3 → Use same connection
+    - **Benefit**
+      - No repeated TLS handshakes
+      - Lower latency
+      - Saves CPU
+      - Open connection once → reuse same connection for multiple requests → no repeated handshake
+      
+    - Example
+    ```javascript
+    import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+    import { NodeHttpHandler } from "@smithy/node-http-handler";
+    import https from "https";
+
+    // Create keep-alive agent
+    const agent = new https.Agent({keepAlive: true, maxSockets: 50});
+    const client = new DynamoDBClient({
+      region: "ap-south-1",
+      requestHandler: new NodeHttpHandler({httpsAgent: agent})
+    });
+    ```
+
+  [Read More](./topic-26-sdk-best-practices.svg)
 
 ---
 
-## 28. Security Overview
+## 27. Security Overview
 
-1. **IAM:** Fine-grained policies following Least Privilege.
-2. **Encryption:** **At Rest** (KMS) and **In Transit** (TLS/HTTPS) are default.
-3. **VPC Endpoints:** Keep traffic within the AWS private network for higher security.
+1. **IAM:** Always follow least privilege to reduce blast radius if compromised.
+2. **Encryption:** **At Rest** (KMS) and **In Transit** (TLS/HTTPS) are default. 
+  - At Rest: Encrypts data on disk (KMS)
+    - AWS managed (default )
+    - Customer managed (more control)
+    
+    Example
+
+    ```text
+    Data → encrypted → stored
+    Read → decrypted → returned
+    ```
+  - In Transit: Encrypts data in motion (TLS/HTTPS)
+    - Nobody can: sniff network, read packets
+    Example
+    ```text
+    App → (HTTPS) → DynamoDB
+    ```
+   - **Question:** I'm not encrypting data manually, so how is it still encrypted.
+   - **Answer:**:DynamoDB protects data in 2 ways: 
+      1. Encryption At Rest (Storage level)
+          - Exp : If we save like
+            > putItem({ name: "Pradeep", phone: "9876543210" });
+            
+          - What DynamoDB does automatically:
+            - Before saving to disk
+            - It encrypts your data using AWS Key Management Service (KMS)
+            - So internally it becomes something like:
+              > Encrypted blob (not readable)
+          
+      2. Encryption In Transit (Network level)
+          - When your app talks to DynamoDB:
+            - It uses HTTPS
+            - Which uses Transport Layer Security (TLS)
+              > Your App → (TLS encrypted) → DynamoDB
+            - Example > ``` { "phone": "9876543210" }```
+            - It is encrypted while traveling over the network
+          
+      
+3. **VPC Endpoints: (Private Network Access)** Keep traffic within the AWS private network for higher security.
+  - Without VPC Endpoint: ```EC2 → Internet → DynamoDB```
+    - Goes over public internet
+    - Needs NAT Gateway / Internet Gateway
+  - With VPC Endpoint: ```EC2 → VPC → DynamoDB```
+    - No internet involved
+    - Traffic stays inside AWS private network
+    - No NAT Gateway needed
+    - More secure
+  - VPC Flow
+    ```text
+    App (IAM Role attached)
+      ↓
+    IAM checks permission
+      ↓
+    HTTPS (encrypted in transit)
+      ↓
+    DynamoDB (encrypted at rest via KMS)
+      ↓
+    Access Granted via VPC Endpoint (private network)
+    ```
+  
+
+  [Read More](./topic-28-security.svg)
 
 ---
 
-## 29. Adaptive Capacity
-
-DynamoDB is designed to handle "unbalanced" workloads automatically.
-
-- **Mechanism:** It redistributes throughput from idle partitions to "hot" partitions that are experiencing high traffic.
-
----
-
-## 30. Hot Partition Detection
-
-Monitoring for uneven traffic is essential for maintaining low latency.
-
-- **CloudWatch Metrics:** Monitor `ThrottledRequests` and `ConsumedReadCapacityUnits`.
-- **Contributor Insights:** Use this tool to see which specific Partition Keys are causing the most traffic in real-time.
-
----
-
-## 31. Retry Strategy (Exponential Backoff & Jitter)
-
-In distributed systems, failures are inevitable.
-
-- **Exponential Backoff:** Progressively increase the wait time between retries to avoid overwhelming the database.
-
----
-
-## 32. Idempotency Keys
+## 28. Idempotency Keys
 
 Essential for critical operations like payments.
 
 - **Problem:** If a network timeout occurs, the client might retry a request that actually succeeded, leading to duplicate data.
-- **Solution:** Store a unique `requestId` with the item and use a `ConditionExpression` to ensure the write only happens once.
+  - **WITHOUT idempotency**
+  - Example
+  ```text
+  Imagine a payment API: User clicks  "Pay ₹1000"
+  Client → API → DynamoDB → Payment done 
+  Client sees timeout → Retries → DynamoDB → Payment done again ❌
+  Result: User charged twice!
+  ```
+- **Solution: Idempotency Key** Store a unique `requestId` with the item and use a `ConditionExpression` to ensure the write only happens once.
+  - Only insert if requestId does NOT already exist
+  - Example
+  ```json
+  {
+    "requestId": "txn-12345",
+    "userId": "u1",
+    "amount": 1000
+  }
+  ```
+  - How DynamoDB helps ```ConditionExpression: "attribute_not_exists(requestId)"``` means: Insert only if this requestId is not already used
+  - Result
+    ```text
+    First request → Success 
+    Retry → Fails (requestId already exists) ❌
+    No duplicate payment!
+    ```
 
 ---
 
-## 33. Data Modeling Patterns
+## 29. Data Modeling Patterns
 
 Mastering these core patterns is the key to Single-Table Design:
 
-- **One-to-Many:** Using Item Collections (same PK, different SK).
+- **One-to-Many:** One user → many orders, Use same PK, different SK
+  - Example
+    ```text
+    PK = USER#1
+    SK = PROFILE        → user info  
+    SK = ORDER#101      → order 1  
+    SK = ORDER#102      → order 2  
+    SK = ORDER#103      → order 3  
+    ```
+  - Query: ```Query PK = USER#1``` → Get all orders for this user
+  - Conclusion
+    - DynamoDB stores items with same PK together
+    - Sorted by SK
 - **Many-to-Many:** Using an Adjacency List pattern.
+  - Example
+    ```text
+    Students ↔ Courses
+    - One student → many courses
+    - One course → many students
+
+    PK = STUDENT#1   SK = COURSE#101
+    PK = STUDENT#1   SK = COURSE#102
+
+    PK = COURSE#101  SK = STUDENT#1
+    PK = COURSE#101  SK = STUDENT#2
+    ```
+  - We can query both ways:
+    - Get all courses for a student ```PK = STUDENT#1```
+    - Get all students for a course ```PK = COURSE#101```
 - **Inverted Index:** Swapping PK and SK in a GSI to query relationships from both ends.
+  - Problem: Sometimes you want to query from the other side
+  - Table Given
+    ```text
+    Orders stored like:
+
+    PK = USER#1
+    SK = ORDER#101
+    ```
+  - But what if you want to query by order ID?
+    - You can't do it with the current table
+    - You need a GSI
+    - Create a GSI with:
+      ```text
+      PK = ORDER#101
+      SK = USER#1
+      ```
+    - Now you can query by order ID!
 
 ---
 
-## 34. Event-Driven Architecture (Streams)
-
-DynamoDB Streams provide a time-ordered sequence of every change in your table.
-
-- **Use Cases:**
-  - Generating **Audit Logs**.
-  - Triggering **Analytics** pipelines.
-
----
-
-## 35. Global Tables Conflict Resolution
+## 30. Global Tables Conflict Resolution
 
 When data is updated in multiple regions simultaneously, DynamoDB must decide which update wins.
+  - What are Global Tables
+    - They allow: ```Same table → multiple AWS regions```
+    - Example:
+      ```text
+      India (ap-south-1)
+      US (us-east-1)
+      ```
+    - Both regions:
+      ```text
+      Read & write data
+      Automatically sync
+      ```
+  - **The Problem (Conflict)**: What if same item is updated in 2 regions at the same time? 😬
+    - At same time:
+      ```text
+      India updates:
+      name = "Pradeep Kumar"
+      US updates:
+      name = "Pradeep R"
+      ```
+    - Now conflict: Which value should win? 
 
-- **Mechanism:** **Last Writer Wins (LWW)** based on a system-level timestamp.
+- **Mechanism:** **Last Writer Wins (LWW)** based on a system-level timestamp (automatic by aws).
+  - Solution: 
+    - Last Writer Wins (LWW)
+    - DynamoDB adds a hidden timestamp to every item
+    - When conflict occurs:
+      - The update with the latest timestamp wins
+      - No manual intervention needed!
+    - How it works
+      - Each write has a hidden timestamp:
+      ```text
+      India write → 10:00:01.100  
+      US write → 10:00:02.200
+      US write wins 
+      ```
+- **Alternate Solution**: 
+  - Option 1: Avoid multi-region writes
+    - ```Only 1 region writes → others read```
+  - Option 2: Add versioning:  Reject outdated updates
+    ```text
+    {
+      "version": 2
+    }
+    ``` 
+  - Option 3: Custom conflict handling
+    ```text
+    Store both versions
+    Resolve in application logic
+    ```
+  - **Final Mental Model**
+    ```text
+    Multiple regions write → conflict possible  
+    DynamoDB → picks latest timestamp → winner
+    ```
 
 ---
 
-## 36. Capacity Planning
+## 31. Latency Optimization 
 
-Throughput is calculated based on item size (rounded up to the nearest 4KB for reads and 1KB for writes).
+  - Latency=time taken to get response
+  >User clicks → API responds → time taken = latency
+  - Goal: Reduce response time as much as possible
 
-- **RCU:** Depends on item size and whether you use Strong or Eventual consistency.
-
----
-
-## 37. Latency Optimization
-
-- **Connection Reuse:** Keep TCP connections open to avoid handshake overhead.
-
-- **SDK Configuration:** Tune timeout and retry settings.
+- **Connection Reuse & SDK Configuration::** (See [SDK Best Practices](#26-sdk-best-practices) for implementation details).
 - **Lambda Optimization:** Use "Provisioned Concurrency" to eliminate cold starts.
 
 ---
 
-## 38. Schema Evolution
+## 32. Schema Evolution
 
 Since DynamoDB is schemaless, you can add attributes at any time.
 
@@ -1367,7 +1560,7 @@ Since DynamoDB is schemaless, you can add attributes at any time.
 
 ---
 
-## 39. Disaster Recovery (DR)
+## 33. Disaster Recovery (DR)
 
 - **PITR:** Restores your table to any point in time within the last 35 days.
 
@@ -1376,7 +1569,7 @@ Since DynamoDB is schemaless, you can add attributes at any time.
 
 ---
 
-## 40. Data Migration Strategy
+## 34. Data Migration Strategy
 
 For large-scale migrations (SQL to DynamoDB):
 
@@ -1386,7 +1579,7 @@ For large-scale migrations (SQL to DynamoDB):
 
 ---
 
-## 41. Write & Read Amplification
+## 35. Write & Read Amplification
 
 - **Write Amplification:** Every GSI you add increases the cost of a write, as DynamoDB must update the index as well.
 
@@ -1395,7 +1588,7 @@ For large-scale migrations (SQL to DynamoDB):
 
 ---
 
-## 42. Secondary Index Projections
+## 36. Secondary Index Projections
 
 When creating a GSI, choose what data to copy into it:
 
@@ -1405,7 +1598,7 @@ When creating a GSI, choose what data to copy into it:
 
 ---
 
-## 43. Distributed System Thinking
+## 37. Distributed System Thinking
 
 DynamoDB is not a traditional SQL server; it is a massive distributed fleet.
 
@@ -1414,16 +1607,3 @@ DynamoDB is not a traditional SQL server; it is a massive distributed fleet.
 - **Focus on Throughput:** Success in DynamoDB is measured by how efficiently you use your RCU and WCU.
 
 ---
-
-## 43. Distributed System Thinking
-
-DynamoDB is not a traditional SQL server; it is a massive distributed fleet.
-
-- **Design for failure:** Assume retries will happen.
-- **Embrace Eventual Consistency:** It provides the highest availability and lowest cost.
-- **Focus on Throughput:** Success in DynamoDB is measured by how efficiently you use your RCU and WCU.
-
----
-
-
--->
