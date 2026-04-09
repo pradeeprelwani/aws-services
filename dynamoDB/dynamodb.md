@@ -162,13 +162,42 @@ DynamoDB supports atomic transactions for complex operations.
     - Commits only if everything is safe
     - If anything fails -> rollback
 
-### 3.3 Global Tables (Active-Active)
+### 3.3 Global Tables
 
-Provides multi-region replication and conflict resolution.
+- **What are Global Tables?**
+    - It's one DynamoDB table that exists in multiple regions simultaneously, kept in sync automatically.
+    - **Without Global Tables:**
+      - Your table exists ONLY in Mumbai
+      - Mumbai goes down → your app goes down 
+    - **With Global Tables:**
+      - Your table exists in Mumbai + Singapore + Virginia
+      - Mumbai goes down → app switches to Singapore 
+      - Singapore goes down → app switches to Virginia 
+      - users feel nothing
+    - **How it works internally**
+      - DynamoDB automatically replicates data across regions
+      - Uses multi-master replication
+      - Conflict resolution handled automatically
+      - No manual intervention needed
+   
+    | Mode | What it means | Use case |
+    | :--- | :--- | :--- |
+    | **Active-Active** | All regions handle reads and writes at the same time. | Global apps that need very fast speed everywhere in the world. |
+    | **Active-Passive** | One region handles all traffic while others wait on standby. | Simple setups used mostly for backup and disaster recovery. |
+    - **Example**
+      - **Active-Active**:
+        ```
+        🇮🇳 Indian users  ──► Mumbai    (fast, close to them)
+        🇸🇬 Asian users   ──► Singapore (fast, close to them)
+        🇺🇸 US users      ──► Virginia  (fast, close to them)
+        All 3 are live simultaneously 
+        ```
 
-- **Mechanism:** The same table exists in multiple AWS regions with automatic replication.
-- **Benefits:** Low latency for global users and high availability/disaster recovery.
-- **Conflict Resolution:** Uses the "Last Writer Wins" rule where the latest timestamped update overwrites previous ones.
+      - **Active-Passive**:
+        ```
+        ALL users ──► Mumbai (only active region)
+        Singapore sits idle, just waiting for Mumbai to fail
+        ```
 
 ### 3.4 FinOps (Cost Optimization)
 
@@ -985,11 +1014,17 @@ DynamoDB supports **PartiQL**, a SQL-compatible query language.
   - **How it works**: When you turn this feature on, DynamoDB automatically saves every change made to your data. It does this all the time without you needing to do anything.
   - **Time history**
     - **35-day window:** The system keeps a continuous record of your data for the last 35 days.
-    - **Rolling backup:** As a new day starts, the oldest day is removed, so you always have the most recent 5 weeks of history.
+    - **Rolling backup:** As a new day starts, the oldest day is removed, so you always have the most recent 35 days of history.
   - **Restoring data**
     - **Total control:** Restore table to any exact second within that 35-day window.
     - **Safety net:** If someone accidentally deletes data or a bug breaks your database, you can simply "roll back" to a time right before the mistake happened.
     - **New table:** When you restore, DynamoDB creates a brand new table with your old data so your current table stays safe.
+  - **PITR has a cost** : 
+    - PITR is not free — it has an additional charge based on the size of your table. Small cost, but worth mentioning.
+  - **What PITR does NOT protect against**
+    - Region-wide AWS outages
+    - Accidental table deletion (the PITR backup is also deleted)
+    - Data you need older than 35 days
 
 > Example of Point-in-Time Recovery (PITR)
 
@@ -1427,7 +1462,7 @@ Essential for critical operations like payments.
   ```text
   Imagine a payment API: User clicks  "Pay ₹1000"
   Client → API → DynamoDB → Payment done 
-  Client sees timeout → Retries → DynamoDB → Payment done again ❌
+  Client sees timeout → Retries → DynamoDB → Payment done again 
   Result: User charged twice!
   ```
 - **Solution: Idempotency Key** Store a unique `requestId` with the item and use a `ConditionExpression` to ensure the write only happens once.
@@ -1444,7 +1479,7 @@ Essential for critical operations like payments.
   - Result
     ```text
     First request → Success 
-    Retry → Fails (requestId already exists) ❌
+    Retry → Fails (requestId already exists) 
     No duplicate payment!
     ```
 
@@ -1572,35 +1607,153 @@ When data is updated in multiple regions simultaneously, DynamoDB must decide wh
   - Goal: Reduce response time as much as possible
 
 - **Connection Reuse & SDK Configuration::** (See [SDK Best Practices](#26-sdk-best-practices) for implementation details).
-- **Lambda Optimization:** Use "Provisioned Concurrency" to eliminate cold starts.
+- **Lambda Optimization:** Use "Provisioned Concurrency" to eliminate cold starts. 
+  - **What is Cold Start**
+    - When a request comes to AWS Lambda:
+    - If no instance is running → AWS creates a new container
+    - It loads:
+      - Runtime (Node.js, Python, etc.)
+      - code
+      - Dependencies
+    > User request → No instance → Create → Load → Run Delay (cold start)
+  - **Result** This delay = Cold Start
+  
+  - **What is Provisioned Concurrency?** = Keep Lambda instances "always ready"
+    - Instead of waiting for requests, AWS pre-creates and keeps instances warm.
+    - So when request comes:
+      - No initialization
+      - No delay
+      - Instant execution
+    > Instance already running → Direct execution and No delay
+  - **How It Works Internally**
+    - AWS keeps:
+      - Pre-initialized environments
+      - Already loaded:
+        - Code
+        - Libraries
+        - DB connections (if reused)
+    - Basically: "warm pool of Lambdas"
+  - **Important: Cost**
+    - This is NOT free 
+    - You pay for the time these instances stay warm
 
 ---
 
 ## 32. Schema Evolution
 
 Since DynamoDB is schemaless, you can add attributes at any time.
+- **What is Schema Evolution**
+  - There is NO fixed schema
+  - Each item can have different fields
+  - Old data ≠ New data
+  - DB will NOT protect you
+  - YOU (application code) are responsible for handling changes
+- **The Real Problem**
+  - Let’s say your system evolves over time. This is called schema evolution problem
 
-- **Best Practice:** Use a `version` attribute or a `type` attribute to help your application code handle items created under different schema versions.
+  | User ID | Name | Email | Phone | Is Active |
+  | :--- | :--- | :--- | :--- | :--- |
+  | 101 | ✅ | ❌ | ❌ | ❌ |
+  | 102 | ✅ | ✅ | ❌ | ❌ |
+  | 103 | ✅ | ✅ | ✅ | ✅ |
+
 
 ---
 
-## 33. Disaster Recovery (DR)
+## 33. Disaster Recovery (DR) : 
+Think of DR like this: "What happens if something goes terribly wrong?"
 
-- **PITR:** Restores your table to any point in time within the last 35 days.
+- **PITR:** Restores your table to any point in time within the last 35 days. (See [Point-in-Time Recovery (PITR)](#19-backup--restore))
 
 - **Multi-Region:** Use Global Tables to ensure your application can failover to a different region instantly.
+  - PITR protects against human mistakes.
+  - Global Tables protects against AWS infrastructure failures — when an entire region goes down.
+  - **What are Global Tables?** (See [Global Tables](#33-global-tables))
+
 - **RTO/RPO:** Define your Recovery Time and Recovery Point objectives early.
+  - **RPO — Recovery Point Objective** = Maximum age of data you can restore from (past focused)
+    - If disaster hits at 10:30 AM and your last backup was 10:00 AM — you lost 30 minutes of data. If your RPO is 1 hour, that's acceptable. If your RPO is 5 minutes, that's a problem.
+    - To achieve low RPO (minimize data loss):
+    ```text
+    AWS Console → DynamoDB → Your Table → Backups tab → Enable Point-in-Time Recovery (PITR)  
+    ```
+    
+  - **RTO — Recovery Time Objective** = Maximum time your app can stay down (future focused)
+    - If your app goes down at 10:30 AM and comes back at 2:30 PM — your recovery took 4 hours. If your RTO is 4 hours, you're fine. If your RTO is 30 minutes, you failed your target.
+    - To achieve low RTO (minimize downtime):
+     ```text
+     AWS Console → DynamoDB → Global Tables tab → Add a replica region  
+
+     AWS Console → Route 53 → Set up Health Checks + Failover routing   
+     ```
+  - How RPO and RTO works togather
+    ```text
+    You decide:  RPO = 5 minutes
+    You enable:  PITR  ←── this is what you configure in AWS
+                 (achieves your RPO goal)
+    You decide:  RTO = 0 downtime
+    You enable:  Global Tables + Route 53  ←── this is what you configure
+                 (achieves your RTO goal)
+    ```
+  >Note: Both must be defined BEFORE disaster, not during it.
 
 ---
 
 ## 34. Data Migration Strategy
 
+For the overarching strategy of migrating from SQL to DynamoDB, refer to [Section 10: SQL to DynamoDB Migration Strategy](#10-sql-to-dynamodb-migration-strategy).
+
 For large-scale migrations (SQL to DynamoDB):
 
 - **Batching:** Don't move everything at once; use batch processing.
+  - Example : 
+  - BatchWriteItem API = max 25 items per request max 16MB per request (So for 10 million rows: 10,000,000 ÷ 25 = 400,000 batch requests)
+    ```text
+    Move 25 items → success 
+    Move 25 items → success 
+    Move 25 items → failure  → retry just these 25
+    Move 25 items → success 
+    ```
 - **Parallelism:** Use multiple workers to increase throughput.
-- **Monitoring:** Track every failure and implement a dead-letter queue (DLQ) for failed records.
+  - Example: 
+    ```text
+    Parallel (10 workers):
+    Worker 1 → Batch 1, 11, 21, 31...
+    Worker 2 → Batch 2, 12, 22, 32...
+    Worker 3 → Batch 3, 13, 23, 33...
+    ...
+    Worker 10→ Batch 10, 20, 30, 40...
 
+    10x faster = ~33 minutes instead of 5.5 hours
+    ```
+  - **Things to take care**: 
+    - Too few workers  → too slow
+    - Too many workers → exceeds DynamoDB write capacity → throttling 
+    - Sweet spot: tune based on your DynamoDB provisioned capacity
+
+- **Monitoring:** Track every failure and implement a dead-letter queue (DLQ) for failed records.
+  
+  - **Why Monitoring?**
+    ```text
+    During migration of 10M rows:
+    - 9,999,950 rows → migrated successfully 
+    - 50 rows → failed silently 
+    ```
+  - Without monitoring → you never know those 50 rows are missing
+  - With monitoring    → you catch them and fix them
+  - **What is a Dead Letter Queue (DLQ)?**
+    - Batch fails → goes into DLQ 
+    (holds failed items)
+    - Rest of migration continues uninterrupted
+    - After migration, you process just the failed ones
+    - Nothing is lost
+
+| Concept | Problem it solves | Simple analogy |
+| :--- | :--- | :--- |
+| **Batching** | Prevents crashes from moving too much at once. | Moving house using many small boxes instead of one giant truck. |
+| **Parallelism** | Makes migration fast enough to be useful. | Having many movers working at the same time to finish quickly. |
+| **DLQ (Dead Letter Queue)** | Ensures no data is lost if something goes wrong. | A rejection bin where failed items wait to be checked again. |
+| **Monitoring** | Shows you the progress and any failures. | A tracking number for every box so you know where it is. |
 ---
 
 ## 35. Write & Read Amplification
