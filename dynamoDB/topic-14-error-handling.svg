@@ -7,59 +7,46 @@
   <rect width="100%" height="100%" fill="#f4f4f4"/>
   <rect width="100%" height="50" fill="#232F3E"/>
   <text x="20" y="32" font-family="Arial" font-size="20" fill="#ffffff" font-weight="bold">14. Error Handling: Exponential Backoff &amp; Jitter</text>
-
-  <!-- Initial API Call -->
+  
+  <!-- Burst Load -->
   <rect x="300" y="80" width="200" height="60" rx="10" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
-  <text x="400" y="105" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">API Request (T0)</text>
-  <text x="400" y="122" text-anchor="middle" font-family="Arial" font-size="11">(PutItem / Query)</text>
+  <text x="400" y="115" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">1,000 Concurrent Req</text>
 
-  <!-- Error Detection Diamond -->
-  <path d="M400,160 L580,230 L400,300 L220,170 Z" fill="#fff2cc" stroke="#d6b656" stroke-width="2" transform="translate(0,20)"/>
-  <text x="400" y="230" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Error Detector</text>
-  <text x="400" y="245" text-anchor="middle" font-family="Arial" font-size="11">Code: 400 (Throttling)</text>
+  <!-- Throttling Event -->
+  <path d="M400,180 L500,230 L400,280 L300,230 Z" fill="#f8cecc" stroke="#b85450" stroke-width="2" />
+  <text x="400" y="235" text-anchor="middle" font-family="Arial" font-size="11" font-weight="bold" fill="#b85450">429 THROTTLE</text>
   <line x1="400" y1="140" x2="400" y2="180" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
 
-  <!-- Backoff Engine -->
-  <rect x="300" y="350" width="200" height="70" fill="#f8cecc" stroke="#b85450" stroke-width="2"/>
-  <text x="400" y="380" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Wait Strategy</text>
-  <text x="400" y="395" text-anchor="middle" font-family="Arial" font-size="11">Exponential (2^n) + Jitter</text>
-  <line x1="400" y1="320" x2="400" y2="350" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- Exponential Backoff -->
+  <rect x="100" y="350" width="600" height="150" fill="none" stroke="#999" stroke-dasharray="5,5"/>
+  <text x="110" y="370" font-family="Arial" font-size="12" font-weight="bold" fill="#666">Retry Strategy (SDK Default)</text>
 
-  <!-- Timeline Axis Container -->
-  <rect x="40" y="460" width="720" height="320" fill="none" stroke="#999" stroke-dasharray="5,5"/>
-  <text x="50" y="480" font-family="Arial" font-size="12" font-weight="bold" fill="#666">Retry Propagation Timeline</text>
+  <rect x="150" y="400" width="120" height="60" rx="5" fill="#fff2cc" stroke="#d6b656" stroke-width="2"/>
+  <text x="210" y="435" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">Wait 1s</text>
 
-  <!-- Timeline Horizontal Line -->
-  <line x1="80" y1="650" x2="720" y2="650" stroke="#545B64" stroke-width="3" marker-end="url(#arrow)"/>
-  <text x="700" y="680" font-family="Arial" font-size="12">Time (s)</text>
+  <rect x="340" y="400" width="120" height="60" rx="5" fill="#fff2cc" stroke="#d6b656" stroke-width="2"/>
+  <text x="400" y="435" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">Wait 2s</text>
 
-  <!-- Failed Attempt 1 -->
-  <circle cx="100" cy="650" r="10" fill="#d9534f"/>
-  <text x="100" y="630" text-anchor="middle" font-family="Arial" font-size="10" font-weight="bold">Fail 💥</text>
+  <rect x="530" y="400" width="120" height="60" rx="5" fill="#fff2cc" stroke="#d6b656" stroke-width="2"/>
+  <text x="590" y="435" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">Wait 4s</text>
 
-  <!-- Retry 1 Arc -->
-  <path d="M 100 650 Q 150 550 200 650" fill="none" stroke="#666" stroke-width="1.5" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
-  <text x="150" y="580" text-anchor="middle" font-family="Arial" font-size="10">1.1s Wait</text>
-  <circle cx="200" cy="650" r="10" fill="#f0a30a"/>
-  <text x="200" y="680" text-anchor="middle" font-family="Arial" font-size="10">Retry 1</text>
+  <line x1="270" y1="430" x2="340" y2="430" stroke="#000" stroke-width="1" marker-end="url(#arrow)"/>
+  <line x1="460" y1="430" x2="530" y2="430" stroke="#000" stroke-width="1" marker-end="url(#arrow)"/>
 
-  <!-- Retry 2 Arc -->
-  <path d="M 200 650 Q 300 480 400 650" fill="none" stroke="#666" stroke-width="1.5" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
-  <text x="300" y="520" text-anchor="middle" font-family="Arial" font-size="10">2.3s Wait</text>
-  <circle cx="400" cy="650" r="10" fill="#f0a30a"/>
-  <text x="400" y="680" text-anchor="middle" font-family="Arial" font-size="10">Retry 2</text>
-
-  <!-- Success Arc -->
-  <path d="M 400 650 Q 550 400 700 650" fill="none" stroke="#2ca02c" stroke-width="2" marker-end="url(#arrow)"/>
-  <text x="550" y="460" text-anchor="middle" font-family="Arial" font-size="11" font-weight="bold" fill="#2ca02c">4.7s Wait → Success ✅</text>
-  <circle cx="700" cy="650" r="12" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <!-- Jitter Visualization -->
+  <rect x="40" y="550" width="720" height="120" rx="10" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="400" y="580" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">The Power of Jitter</text>
+  
+  <line x1="100" y1="620" x2="700" y2="620" stroke="#666" stroke-width="2" />
+  <circle cx="150" cy="620" r="5" fill="#b91c1c" />
+  <circle cx="280" cy="620" r="5" fill="#b91c1c" />
+  <circle cx="410" cy="620" r="5" fill="#b91c1c" />
+  <circle cx="650" cy="620" r="5" fill="#b91c1c" />
+  <text x="400" y="645" text-anchor="middle" font-family="Arial" font-size="11">Randomized Spreading of Thundering Herds</text>
 
   <!-- Legend -->
-  <rect x="580" y="350" width="180" height="70" fill="#f9f9f9" stroke="#ddd" />
-  <text x="590" y="370" font-family="Arial" font-size="11" font-weight="bold">Why Jitter?</text>
-  <text x="590" y="385" font-family="Arial" font-size="11">- Avoids "Thundering Herd"</text>
-  <text x="590" y="400" font-family="Arial" font-size="11">- Spreads load over time</text>
-
-  <!-- Flow Line -->
-  <line x1="400" y1="420" x2="400" y2="460" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <rect x="100" y="700" width="600" height="100" fill="#f9f9f9" stroke="#ddd" />
+  <text x="120" y="725" font-family="Arial" font-size="12" font-weight="bold">SDK Configuration Tip:</text>
+  <text x="120" y="750" font-family="Arial" font-size="11">- Standard AWS SDK has these built-in</text>
+  <text x="120" y="770" font-family="Arial" font-size="11">- Increase maxRetries for heavy data migration jobs</text>
 </svg>

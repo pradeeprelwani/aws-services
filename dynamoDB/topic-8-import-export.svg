@@ -6,55 +6,50 @@
   </defs>
   <rect width="100%" height="100%" fill="#f4f4f4"/>
   <rect width="100%" height="50" fill="#232F3E"/>
-  <text x="20" y="32" font-family="Arial" font-size="20" fill="#ffffff" font-weight="bold">8. Enterprise Import &amp; Zero-ETL Internal Flow</text>
+  <text x="20" y="32" font-family="Arial" font-size="20" fill="#ffffff" font-weight="bold">8. Enterprise Import/Export &amp; Zero-ETL</text>
+  
+  <!-- S3 Source -->
+  <rect x="50" y="80" width="180" height="100" rx="10" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="140" y="125" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">Amazon S3</text>
+  <text x="140" y="145" text-anchor="middle" font-family="Arial" font-size="11">(CSV / JSON / Ion)</text>
 
-  <!-- Data Source S3 -->
-  <rect x="300" y="80" width="200" height="60" rx="10" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
-  <text x="400" y="105" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">Bulk Data Source (S3)</text>
-  <text x="400" y="122" text-anchor="middle" font-family="Arial" font-size="11">(JSON / CSV / Ion)</text>
+  <!-- Import Job -->
+  <path d="M400,80 L500,130 L400,180 L300,130 Z" fill="#fff2cc" stroke="#d6b656" stroke-width="2" transform="translate(0,0)"/>
+  <text x="400" y="130" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Import Job</text>
+  <text x="400" y="145" text-anchor="middle" font-family="Arial" font-size="10">Zero WCU Cost</text>
+  <line x1="230" y1="130" x2="300" y2="130" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
 
-  <!-- Import Service Logic -->
-  <path d="M400,160 L580,230 L400,300 L220,170 Z" fill="#fff2cc" stroke="#d6b656" stroke-width="2" transform="translate(0,20)"/>
-  <text x="400" y="230" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Import Job Engine</text>
-  <text x="400" y="245" text-anchor="middle" font-family="Arial" font-size="11">Bypasses RCU/WCU metering</text>
-  <line x1="400" y1="140" x2="400" y2="180" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- DynamoDB Target -->
+  <rect x="570" y="80" width="180" height="100" rx="10" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="660" y="135" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">New Table</text>
+  <line x1="500" y1="130" x2="570" y2="130" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
 
-  <!-- Core Table -->
-  <rect x="300" y="350" width="200" height="70" fill="#f8cecc" stroke="#b85450" stroke-width="2"/>
-  <text x="400" y="380" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">DynamoDB Table</text>
-  <text x="400" y="395" text-anchor="middle" font-family="Arial" font-size="11">Target Primary Storage</text>
-  <line x1="400" y1="320" x2="400" y2="350" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="400" y1="180" x2="400" y2="280" stroke="#999" stroke-dasharray="5,5" />
 
-  <!-- Zero-ETL Container -->
-  <rect x="40" y="460" width="720" height="320" fill="none" stroke="#999" stroke-dasharray="5,5"/>
-  <text x="50" y="480" font-family="Arial" font-size="12" font-weight="bold" fill="#666">Managed Sync Pipeline (Zero-ETL)</text>
+  <!-- Zero-ETL Sync -->
+  <rect x="40" y="350" width="720" height="400" fill="none" stroke="#999" stroke-dasharray="5,5"/>
+  <text x="50" y="370" font-family="Arial" font-size="12" font-weight="bold" fill="#666">Zero-ETL Search Analytics Pipeline</text>
 
-  <!-- Opensearch Logic -->
-  <rect x="70" y="510" width="310" height="120" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
-  <text x="225" y="540" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">OpenSearch Service</text>
-  <text x="225" y="565" font-family="Arial" font-size="11">- Fuzzy String Matching</text>
-  <text x="225" y="580" font-family="Arial" font-size="11">- Vector Search Capabilities</text>
-  <text x="225" y="595" font-family="Arial" font-size="11">- Complex Aggregations</text>
+  <rect x="100" y="420" width="180" height="80" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="190" y="465" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">DDB Source Table</text>
 
-  <!-- User Experience Result -->
-  <rect x="420" y="510" width="310" height="120" fill="#f5f5f5" stroke="#666" stroke-width="2"/>
-  <text x="575" y="540" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">User Search Result</text>
-  <text x="575" y="565" text-anchor="middle" font-family="Arial" font-size="11" fill="#2ca02c">Input: "Pradip"</text>
-  <text x="575" y="585" text-anchor="middle" font-family="Arial" font-size="11" fill="#2ca02c">Match: "Pradeep" (Relevance 99%)</text>
+  <!-- Kinesis Adapter -->
+  <rect x="350" y="420" width="100" height="80" fill="#f8cecc" stroke="#b85450" stroke-width="2"/>
+  <text x="400" y="465" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">CDC Stream</text>
+  <line x1="280" y1="460" x2="350" y2="460" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
 
-  <!-- Automated Flow -->
-  <polygon points="250,680 550,680 520,760 220,760" fill="#e1d5e7" stroke="#9673a6" stroke-width="2"/>
-  <text x="385" y="715" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Fully Managed Connector</text>
-  <text x="385" y="735" text-anchor="middle" font-family="Arial" font-size="11">No Lambda, No Kinesis, No Management</text>
+  <!-- OpenSearch -->
+  <rect x="520" y="420" width="180" height="80" rx="10" fill="#e1d5e7" stroke="#9673a6" stroke-width="2"/>
+  <text x="610" y="465" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">OpenSearch Service</text>
+  <line x1="450" y1="460" x2="520" y2="460" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
 
-  <!-- Connections -->
-  <line x1="400" y1="420" x2="400" y2="460" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <line x1="225" y1="630" x2="385" y2="680" stroke="#666" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
-  <line x1="575" y1="630" x2="385" y2="680" stroke="#666" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
-
-  <!-- Legend -->
-  <rect x="580" y="350" width="180" height="70" fill="#f9f9f9" stroke="#ddd" />
-  <text x="590" y="370" font-family="Arial" font-size="11" font-weight="bold">Migration Value:</text>
-  <text x="590" y="385" font-family="Arial" font-size="11">- Zero Performance Impact</text>
-  <text x="590" y="400" font-family="Arial" font-size="11">- Native AWS Integration</text>
+  <!-- Search Queries -->
+  <path d="M610,650 L710,700 L610,750 L510,700 Z" fill="#fff2cc" stroke="#d6b656" stroke-width="2" />
+  <text x="610" y="700" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Fuzzy Search</text>
+  <line x1="610" y1="500" x2="610" y2="650" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  
+  <rect x="100" y="650" width="250" height="100" fill="#f9f9f9" stroke="#ddd" />
+  <text x="110" y="675" font-family="Arial" font-size="12" font-weight="bold">Search Logic:</text>
+  <text x="110" y="695" font-family="Arial" font-size="11">- Typos (Fuzzy)</text>
+  <text x="110" y="715" font-family="Arial" font-size="11">- Full-text indexing</text>
 </svg>

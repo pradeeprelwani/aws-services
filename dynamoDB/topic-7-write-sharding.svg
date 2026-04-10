@@ -6,63 +6,45 @@
   </defs>
   <rect width="100%" height="100%" fill="#f4f4f4"/>
   <rect width="100%" height="50" fill="#232F3E"/>
-  <text x="20" y="32" font-family="Arial" font-size="20" fill="#ffffff" font-weight="bold">7. Write Sharding (Adding Entropy)</text>
-
-  <!-- Hot Item Request -->
+  <text x="20" y="32" font-family="Arial" font-size="20" fill="#ffffff" font-weight="bold">7. Write Sharding for Hot Keys</text>
+  
+  <!-- Hot Key Entry -->
   <rect x="300" y="80" width="200" height="60" rx="10" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
-  <text x="400" y="105" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">High Velocity Ingest</text>
-  <text x="400" y="122" text-anchor="middle" font-family="Arial" font-size="11">(e.g., Global Counter / Status)</text>
+  <text x="400" y="105" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">Hot Partition Key</text>
+  <text x="400" y="122" text-anchor="middle" font-family="Arial" font-size="11">(e.g., PK = "ACTIVE")</text>
 
-  <!-- Sharding Router -->
-  <path d="M400,160 L580,230 L400,300 L220,170 Z" fill="#fff2cc" stroke="#d6b656" stroke-width="2" transform="translate(0,20)"/>
-  <text x="400" y="230" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Entropy Suffixer</text>
-  <text x="400" y="245" text-anchor="middle" font-family="Arial" font-size="11">PK + Random(0, N)</text>
-  <line x1="400" y1="140" x2="400" y2="180" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- Shard Calculator -->
+  <rect x="300" y="220" width="200" height="80" fill="#f8cecc" stroke="#b85450" stroke-width="2"/>
+  <text x="400" y="250" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">App Logic: Suffix Gen</text>
+  <text x="400" y="270" text-anchor="middle" font-family="Arial" font-size="11">Append Random(1, N)</text>
+  <line x1="400" y1="140" x2="400" y2="220" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
 
-  <!-- Partition Hashing Logic -->
-  <rect x="300" y="350" width="200" height="70" fill="#f8cecc" stroke="#b85450" stroke-width="2"/>
-  <text x="400" y="380" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Distributed Hashing</text>
-  <text x="400" y="395" text-anchor="middle" font-family="Arial" font-size="11">Map Shards to Different Nodes</text>
-  <line x1="400" y1="320" x2="400" y2="350" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- Distributed Keys -->
+  <rect x="70" y="380" width="180" height="60" rx="5" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="160" y="415" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">PK: "ACTIVE#1"</text>
 
-  <!-- Physical Node Distribution Container -->
-  <rect x="40" y="460" width="720" height="320" fill="none" stroke="#999" stroke-dasharray="5,5"/>
-  <text x="50" y="480" font-family="Arial" font-size="12" font-weight="bold" fill="#666">Multi-Partition Storage Cluster</text>
+  <rect x="310" y="380" width="180" height="60" rx="5" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="400" y="415" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">PK: "ACTIVE#2"</text>
 
-  <!-- Node A -->
-  <rect x="70" y="510" width="180" height="100" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
-  <text x="160" y="550" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">Partition 1 (Leader)</text>
-  <text x="160" y="570" text-anchor="middle" font-family="Arial" font-size="11">Key: ACTIVE#0</text>
-  <text x="160" y="585" text-anchor="middle" font-family="Arial" font-size="11">Load: 1,000 WCU</text>
+  <rect x="550" y="380" width="180" height="60" rx="5" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="640" y="415" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">PK: "ACTIVE#N"</text>
 
-  <!-- Node B -->
-  <rect x="310" y="510" width="180" height="100" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
-  <text x="400" y="550" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">Partition 2 (Leader)</text>
-  <text x="400" y="570" text-anchor="middle" font-family="Arial" font-size="11">Key: ACTIVE#1</text>
-  <text x="400" y="585" text-anchor="middle" font-family="Arial" font-size="11">Load: 1,000 WCU</text>
+  <line x1="400" y1="300" x2="160" y2="380" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="400" y1="300" x2="400" y2="380" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="400" y1="300" x2="640" y2="380" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
 
-  <!-- Node C -->
-  <rect x="550" y="510" width="180" height="100" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
-  <text x="640" y="550" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">Partition 3 (Leader)</text>
-  <text x="640" y="570" text-anchor="middle" font-family="Arial" font-size="11">Key: ACTIVE#2</text>
-  <text x="640" y="585" text-anchor="middle" font-family="Arial" font-size="11">Load: 1,000 WCU</text>
+  <!-- Storage Partitions -->
+  <rect x="40" y="520" width="720" height="200" fill="none" stroke="#999" stroke-dasharray="5,5"/>
+  <text x="50" y="540" font-family="Arial" font-size="12" font-weight="bold" fill="#666">Distributed Physical Partitions</text>
 
-  <!-- Scatter/Gather Logic -->
-  <polygon points="250,680 550,680 520,760 220,760" fill="#e1d5e7" stroke="#9673a6" stroke-width="2"/>
-  <text x="385" y="715" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Scatter/Gather Query</text>
-  <text x="385" y="735" text-anchor="middle" font-family="Arial" font-size="11">Parallel Scan across all N shards</text>
-  <line x1="160" y1="610" x2="385" y2="680" stroke="#666" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
-  <line x1="640" y1="610" x2="385" y2="680" stroke="#666" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
+  <rect x="70" y="570" width="180" height="80" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="160" y="615" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">Partition A</text>
 
-  <!-- Adaptive Capacity -->
-  <ellipse cx="120" cy="300" rx="80" ry="40" fill="#f0a30a" stroke="#BD7000" stroke-width="2"/>
-  <text x="120" y="295" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold" fill="#fff">Adaptive</text>
-  <text x="120" y="310" text-anchor="middle" font-family="Arial" font-size="11" fill="#fff">Rebalancing</text>
-  <path d="M 120 340 Q 120 400 120 435" fill="none" stroke="#f0a30a" stroke-width="2" stroke-dasharray="4,2" marker-end="url(#arrow)"/>
+  <rect x="310" y="570" width="180" height="80" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="400" y="615" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">Partition B</text>
 
-  <!-- Legend -->
-  <rect x="580" y="350" width="180" height="70" fill="#f9f9f9" stroke="#ddd" />
-  <text x="590" y="370" font-family="Arial" font-size="11" font-weight="bold">Shard Math:</text>
-  <text x="590" y="385" font-family="Arial" font-size="11">- Total Load / 1000</text>
-  <text x="590" y="400" font-family="Arial" font-size="11">- N Shards required</text>
+  <rect x="550" y="570" width="180" height="80" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="400" y="615" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">Partition C</text>
+
+  <text x="400" y="760" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold" fill="#2e7d32">Total Throughput = N * 1,000 WCU</text>
 </svg>

@@ -6,56 +6,47 @@
   </defs>
   <rect width="100%" height="100%" fill="#f4f4f4"/>
   <rect width="100%" height="50" fill="#232F3E"/>
-  <text x="20" y="32" font-family="Arial" font-size="20" fill="#ffffff" font-weight="bold">11. Performance Optimization: 100k Record Flow</text>
+  <text x="20" y="32" font-family="Arial" font-size="20" fill="#ffffff" font-weight="bold">11. DynamoDB Performance Optimization</text>
+  
+  <!-- Parallel Scans/Queries -->
+  <rect x="40" y="80" width="720" height="250" fill="none" stroke="#999" stroke-dasharray="5,5"/>
+  <text x="50" y="100" font-family="Arial" font-size="12" font-weight="bold" fill="#666">Parallel Processing Pattern (100k+ Records)</text>
 
-  <!-- Data Ingest Request -->
-  <rect x="300" y="80" width="200" height="60" rx="10" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
-  <text x="400" y="105" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">Large Bulk Load</text>
-  <text x="400" y="122" text-anchor="middle" font-family="Arial" font-size="11">(100,000 Records)</text>
+  <rect x="100" y="130" width="150" height="60" rx="10" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="175" y="165" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Worker 1</text>
 
-  <!-- Batching Strategy Diamond -->
-  <path d="M400,160 L580,230 L400,300 L220,170 Z" fill="#fff2cc" stroke="#d6b656" stroke-width="2" transform="translate(0,20)"/>
-  <text x="400" y="230" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Batch Orchestrator</text>
-  <text x="400" y="245" text-anchor="middle" font-family="Arial" font-size="11">Group into chunks of 25</text>
-  <line x1="400" y1="140" x2="400" y2="180" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <rect x="325" y="130" width="150" height="60" rx="10" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="400" y="165" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Worker 2</text>
 
-  <!-- Concurrency Engine -->
-  <rect x="300" y="350" width="200" height="70" fill="#f8cecc" stroke="#b85450" stroke-width="2"/>
-  <text x="400" y="380" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Promise.all Handler</text>
-  <text x="400" y="395" text-anchor="middle" font-family="Arial" font-size="11">N Parallel Workers (Node.js)</text>
-  <line x1="400" y1="320" x2="400" y2="350" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <rect x="550" y="130" width="150" height="60" rx="10" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="625" y="165" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Worker N</text>
 
-  <!-- Execution Comparison Container -->
-  <rect x="40" y="460" width="720" height="320" fill="none" stroke="#999" stroke-dasharray="5,5"/>
-  <text x="50" y="480" font-family="Arial" font-size="12" font-weight="bold" fill="#666">Performance Metric Analysis</text>
+  <line x1="175" y1="190" x2="175" y2="250" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="400" y1="190" x2="400" y2="250" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="625" y1="190" x2="625" y2="250" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
 
-  <!-- Sequential (Anti-Pattern) -->
-  <rect x="70" y="510" width="280" height="150" fill="#f8cecc" stroke="#b85450" stroke-width="2" opacity="0.4"/>
-  <text x="210" y="540" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">Sequential (PutItem x 100k)</text>
-  <text x="210" y="565" font-family="Arial" font-size="10" fill="#d9534f">Latency: ~2 Hours</text>
-  <text x="210" y="585" font-family="Arial" font-size="10">Connection Handshake Overhead</text>
-  <text x="210" y="615" text-anchor="middle" font-family="Arial" font-size="14" fill="#d9534f">❌ SLOW</text>
+  <rect x="100" y="250" width="600" height="60" fill="#f8cecc" stroke="#b85450" stroke-width="2"/>
+  <text x="400" y="285" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">Batch Processing (BatchGet/BatchWrite)</text>
 
-  <!-- Parallel Batch (Target) -->
-  <rect x="450" y="510" width="280" height="150" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
-  <text x="590" y="540" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">Parallel Batch (BatchWrite x 4k)</text>
-  <text x="590" y="565" font-family="Arial" font-size="10" fill="#2ca02c">Latency: ~12 Minutes</text>
-  <text x="590" y="585" font-family="Arial" font-size="10">Optimized TCP Persistence</text>
-  <text x="590" y="615" text-anchor="middle" font-family="Arial" font-size="14" fill="#2ca02c">✅ FAST</text>
+  <!-- Hot Key Mitigation -->
+  <rect x="40" y="380" width="720" height="400" fill="none" stroke="#999" stroke-dasharray="5,5"/>
+  <text x="50" y="400" font-family="Arial" font-size="12" font-weight="bold" fill="#666">Hot Key &amp; Caching Strategy</text>
 
-  <!-- Unprocessed Items Logic -->
-  <polygon points="250,680 550,680 520,760 220,760" fill="#e1d5e7" stroke="#9673a6" stroke-width="2"/>
-  <text x="385" y="715" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">UnprocessedItems Handler</text>
-  <text x="385" y="735" text-anchor="middle" font-family="Arial" font-size="11">Detect Throttling &amp; Auto-Retry failed chunks</text>
+  <ellipse cx="200" cy="500" rx="100" ry="50" fill="#f0a30a" stroke="#BD7000" stroke-width="2"/>
+  <text x="200" y="505" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold" fill="#fff">DAX Cache</text>
 
-  <!-- Connections -->
-  <line x1="400" y1="420" x2="400" y2="460" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <line x1="210" y1="660" x2="385" y2="680" stroke="#666" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
-  <line x1="590" y1="660" x2="385" y2="680" stroke="#666" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
+  <rect x="450" y="450" width="250" height="100" rx="10" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="575" y="505" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">DynamoDB Table</text>
+  
+  <line x1="300" y1="500" x2="450" y2="500" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="375" y="490" text-anchor="middle" font-family="Arial" font-size="11">Cache Miss</text>
 
-  <!-- Legend -->
-  <rect x="580" y="350" width="180" height="70" fill="#f9f9f9" stroke="#ddd" />
-  <text x="590" y="370" font-family="Arial" font-size="11" font-weight="bold">Batch Limits:</text>
-  <text x="590" y="385" font-family="Arial" font-size="11">- 25 items (Write)</text>
-  <text x="590" y="400" font-family="Arial" font-size="11">- 100 items (Read)</text>
+  <!-- Comparison Table Legend -->
+  <rect x="100" y="620" width="600" height="120" fill="#f9f9f9" stroke="#ddd" />
+  <text x="120" y="645" font-family="Arial" font-size="12" font-weight="bold">Optimization Cheat Sheet:</text>
+  <text x="120" y="670" font-family="Arial" font-size="11">- Sequential (Avoid) vs Parallel (Prefer)</text>
+  <text x="120" y="690" font-family="Arial" font-size="11">- Scan (Avoid) vs Query (Prefer)</text>
+  <text x="120" y="710" font-family="Arial" font-size="11">- Item Size (Small) vs Large Blobs (S3)</text>
+  <text x="450" y="670" font-family="Arial" font-size="11">- Pagination via LastEvaluatedKey</text>
+  <text x="450" y="690" font-family="Arial" font-size="11">- Write Sharding for Hot Keys</text>
 </svg>

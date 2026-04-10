@@ -48,8 +48,7 @@ To master DynamoDB at a 10-year experience level, you must move beyond CRUD and 
 33. [Disaster Recovery](#33-disaster-recovery-dr)
 34. [Data Migration](#34-data-migration-strategy)
 35. [Write & Read Amplification](#35-write--read-amplification)
-36. [Index Projections](#36-secondary-index-projections)
-37. [Distributed Systems Thinking](#37-distributed-system-thinking)
+36. [Distributed Systems Thinking](#36-distributed-system-thinking)
 
 ---
 
@@ -78,11 +77,15 @@ GAC is the entry point of the DynamoDB fleet. It acts like a gatekeeper for inte
 
 DynamoDB manages "Hot Partitions" by rebalancing throughput dynamically across the partition fleet.
 
-- **Adaptive Capacity:** If one partition is under heavy load while others are idle, DynamoDB reallocates unused throughput to the busy partition.
-  - **Scenario:** A table with 3,000 total WCU spread across 3 partitions (A, B, C).
-  - **Normal Allocation:** A: 1,000 | B: 1,000 | C: 1,000.
-  - **Traffic Spike on A:** A receives 1,500 writes/sec.
-  - **Adaptive Result:** DynamoDB may shift allocation to A: 1,500 | B: 750 | C: 750 to prevent throttling on A.
+  - **Adaptive Capacity:** 
+    - Adaptive Capacity helps DynamoDB automatically handle uneven traffic
+    - It prioritizes frequently accessed (hot) partitions without requiring manual sharding
+    - Handles hot partitions automatically
+    - No application-level changes required (automatic handling)
+    - **Scenario:** A table with 3,000 total WCU spread across 3 partitions (A, B, C).
+    - **Normal Allocation:** A: 1,000 | B: 1,000 | C: 1,000.
+    - **Traffic Spike on A:** A receives 1,500 writes/sec.
+    - **Adaptive Result:** DynamoDB may shift allocation to A: 1,500 | B: 750 | C: 750 to prevent throttling on A.
 
 - **Bursting:** For short-lived traffic spikes, DynamoDB retains a "burst buffer" of unused capacity (up to 5 minutes) to handle sudden surges.
 
@@ -134,6 +137,9 @@ Once a request passes GAC, DynamoDB must find the physical location of the data.
 When data changes in DynamoDB (insert/update/delete), you can trigger downstream actions via event-driven architectures.
 
 - **DynamoDB Streams:** Use for Lambda triggers and short-term event processing.
+  - Built-in, limited retention (~24 hours)
+  - Tight integration with Lambda
+  - 24 hours retention
   - *Example:* User creates order -> Stream records event -> Lambda processes event -> Sends confirmation email.
   ```json
   {
@@ -145,65 +151,28 @@ When data changes in DynamoDB (insert/update/delete), you can trigger downstream
   ```
 
 - **Amazon Kinesis Data Streams:** Better for long-term retention, real-time analytics, and multiple consumers.
+  - Longer retention configurable (up to 365 days)
+  - Multiple consumers
+  - Better for analytics pipelines
   - *Example:* Orders -> Kinesis -> Analytics system + Fraud detection + Real-time Dashboard.
 
 ### 3.2 Transactions (ACID)
 
-DynamoDB supports atomic transactions for complex operations.
+DynamoDB supports atomic transactions for complex operations. Max 100 items per transaction, costs 2x a normal write due to extra coordination checks.
 
-- **Limits:** Maximum of 100 items per transaction.
-
-- **Cost:** Approximately 2x the cost of a normal write because DynamoDB performs extra coordination checks to guarantee consistency.
-
-- **How DynamoDB Handles It Internally** When you run a transaction:
-  - DynamoDB locks/checks items
-    - Verifies no conflicts
-    - Performs all operations
-    - Commits only if everything is safe
-    - If anything fails -> rollback
+> For full details on how DynamoDB handles transactions internally (lock, verify, commit, rollback), see [Section 13: Conditional Writes & Optimistic Locking](#13-conditional-writes--optimistic-locking).
 
 ### 3.3 Global Tables
 
-- **What are Global Tables?**
-    - It's one DynamoDB table that exists in multiple regions simultaneously, kept in sync automatically.
-    - **Without Global Tables:**
-      - Your table exists ONLY in Mumbai
-      - Mumbai goes down → your app goes down 
-    - **With Global Tables:**
-      - Your table exists in Mumbai + Singapore + Virginia
-      - Mumbai goes down → app switches to Singapore 
-      - Singapore goes down → app switches to Virginia 
-      - users feel nothing
-    - **How it works internally**
-      - DynamoDB automatically replicates data across regions
-      - Uses multi-master replication
-      - Conflict resolution handled automatically
-      - No manual intervention needed
-   
-    | Mode | What it means | Use case |
-    | :--- | :--- | :--- |
-    | **Active-Active** | All regions handle reads and writes at the same time. | Global apps that need very fast speed everywhere in the world. |
-    | **Active-Passive** | One region handles all traffic while others wait on standby. | Simple setups used mostly for backup and disaster recovery. |
-    - **Example**
-      - **Active-Active**:
-        ```
-        🇮🇳 Indian users  ──► Mumbai    (fast, close to them)
-        🇸🇬 Asian users   ──► Singapore (fast, close to them)
-        🇺🇸 US users      ──► Virginia  (fast, close to them)
-        All 3 are live simultaneously 
-        ```
+One DynamoDB table that exists in multiple AWS regions simultaneously, kept in sync automatically. If one region goes down, traffic automatically shifts to another — users feel nothing.
 
-      - **Active-Passive**:
-        ```
-        ALL users ──► Mumbai (only active region)
-        Singapore sits idle, just waiting for Mumbai to fail
-        ```
+> For full details on replication, Active-Active vs Active-Passive modes, and conflict resolution, see [Section 30: Global Tables Conflict Resolution](#30-global-tables-conflict-resolution).
 
 ### 3.4 FinOps (Cost Optimization)
 
-1. **On-Demand:** You pay per request. Best for unpredictable traffic or new applications.
-2. **Provisioned Capacity:** You define specific RCU/WCU limits. More cost-effective for predictable, steady-state traffic.
-3. **Reserved Capacity:** Commit to a baseline usage over a 1 or 3-year term for a **50â€"70% cost reduction**.
+Three capacity modes: On-Demand (pay per request), Provisioned (fixed RCU/WCU limits), and Reserved (commit 1–3 years for up to 70% discount).
+
+> For full cost optimization strategies including Scan vs Query, attribute naming, and GSI cost impact, see [Section 22: Cost Optimization](#22-cost-optimization).
 
 ### 3.5 DAX (DynamoDB Accelerator)
 
@@ -228,8 +197,8 @@ DAX is specifically engineered for:
 
 While powerful, DAX is not a "one-size-fits-all" solution. Avoid DAX if:
 
-- **Write-Heavy Operations:** DAX provides no performance benefit for writes; it may actually add a slight overhead due to the write-through requirement.
-- **Strict Strong Consistency:** DAX is optimized for **eventually consistent** reads. While it supports strongly consistent reads, they must be issued to the DynamoDB endpoint directly or they will bypass the cache gain.
+- **Write-Heavy Operations:** DAX provides no performance benefit for writes; it may actually add a slight overhead due to the write-through requirement. Not suitable for write-heavy workloads
+- **Strict Strong Consistency:** DAX is optimized for **eventually consistent** reads. While it supports strongly consistent reads, they must be issued to the DynamoDB endpoint directly or they will bypass the cache gain. Not ideal if you need strongly consistent reads frequently
 - **Cost Sensitivity:** DAX is an additional provisioned resource (clusters of nodes). If millisecond latency (standard DynamoDB) is sufficient for your SLA, the extra cost of a DAX cluster may not be justified.
 - **Frequently Changing Data:** If your data expires or changes every few seconds, the cache churn (constant invalidation and reloading) can negate the performance benefits.
 
@@ -238,6 +207,10 @@ While powerful, DAX is not a "one-size-fits-all" solution. Avoid DAX if:
 ---
 
 ## 4. Advanced Security & Governance
+
+Covers cross-account access via Resource-Based Policies and Client-Side Encryption using the AWS Database Encryption SDK.
+
+> For a full security overview including IAM least privilege, KMS encryption at rest, TLS in transit, and VPC Endpoints, see [Section 27: Security Overview](#27-security-overview).
 
 ### 4.1 Resource-Based Policies
 
@@ -303,18 +276,27 @@ const user = {
     phone: "9876543210"
 };
 
-async function secureDatabaseOperations() {
+async function secureDatabaseOperations(userData: any) {
     try {
-        // Step 2: Encrypt data before it leaves the application
-        // The SDK handles the interaction with KMS to secure the payload
-        const encryptedUser = await encrypt(keyArn, user);
-        // Step 3: Store the encrypted "blob" or fields in DynamoDB
-        await dynamo.put({TableName: "UsersTable", Item: encryptedUser});
-        // Step 4: Retrieve the data from DynamoDB
-        const result = await dynamo.get({TableName: "UsersTable",Key: { name: "Pradeep" }});
-        // Step 5: Decrypt the data after reading so the app can use it
-        const { decryptedUser } = await decrypt(keyArn, result.Item);
-        console.log("Decrypted User Data:", decryptedUser);
+        // Step 2: Encrypt data (The SDK handles interaction with KMS)
+        const { result: encryptedBlob } = await encrypt(keyArn, JSON.stringify(userData));
+
+        // Step 3: Store encrypted blob in DynamoDB (using v3 SDK)
+        const { PutCommand, GetCommand, DynamoDBDocumentClient } = require("@aws-sdk/lib-dynamodb");
+        const docClient = DynamoDBDocumentClient.from(dynamo);
+
+        await docClient.send(new PutCommand({
+            TableName: "UsersTable",
+            Item: { PK: userData.name, secureData: encryptedBlob }
+        }));
+
+        // Step 4: Retrieve and Decrypt
+        const { Item } = await docClient.send(new GetCommand({
+            TableName: "UsersTable", Key: { PK: userData.name }
+        }));
+
+        const { plaintext } = await decrypt(keyArn, Item.secureData);
+        console.log("Decrypted User Data:", JSON.parse(plaintext.toString()));
     } catch (error) {
         console.error("Encryption/Decryption Error:", error);
     }
@@ -872,6 +854,8 @@ To get the next set of data, you use two special labels:
 
 - **LastEvaluatedKey:** When DynamoDB stops at the 1MB limit, it sends this key back to you. It is like a "bookmark" that tells you exactly where the database stopped reading.
 - **ExclusiveStartKey:** To get the next page, you send a new request to DynamoDB. You include the `LastEvaluatedKey` from the first step and put it into a field called `ExclusiveStartKey`.
+- **Pagination ≠ offset-based** — unlike SQL OFFSET, DynamoDB has no page numbers. You cannot jump to page 5 directly. Each page requires the token from the previous page. This affects UI design (no "go to page N" feature possible without workarounds)
+- **Count vs ScannedCount in responses** — ScannedCount = items read from disk, Count = items returned after filter. The gap between them reveals filter inefficiency.
 
 
 ### The Step-by-Step Flow
@@ -938,11 +922,11 @@ To get the next set of data, you use two special labels:
 | **Sort Key** | Must be different. | Can be different. |
 | **Consistency** | Supports Strongly Consistent reads. | Eventually Consistent only. |
 | **Creation** | Only at table creation time. | Can be added or deleted anytime. |
-| **Max count** | 5 | 20 |
+| **Max count** | 5 | 20 (default, can be increased via AWS support)|
 
 > Important Notes
 
-- GSI limit (20) can be increased via AWS support (soft limit).
+- GSI limit (20) can be increased via AWS support (default limit).
   - AWS has set 20 as the default maximum, BUT you can request AWS to increase it
 - LSI limit (5) is hard limit -> cannot be increased.
 - Too many GSIs = higher cost + write amplification
@@ -1206,7 +1190,7 @@ Use **Amazon CloudWatch** to track health:
 ---
 
 ## 22. Cost Optimization
-
+- **On-Demand vs Provisioned cost comparison** — On-Demand costs ~6–7x more per request than Provisioned at sustained load but requires zero capacity planning. Rule of thumb: use On-Demand for < 18% utilization consistency; use Provisioned + Auto Scaling otherwise.
 - **Avoid Scans:** Scans read every item in the table; always prefer `Query`.
   - Why not to use Scan:
     - Table has 1 million records: You want 10 records
@@ -1232,6 +1216,7 @@ Use **Amazon CloudWatch** to track health:
     - Stores data separately
     - Gets updated on every write
     - Costs extra storage + extra write capacity
+    - More GSIs directly increase write amplification and cost
     - More data in GSI = more cost Exp 
         - Write to table + Write to GSI  + Write to GSI2 (if exists)
         - If GSI has more attributes: More data written, More WCU consumed
@@ -1386,9 +1371,11 @@ AND SK BETWEEN "10:00" AND "10:10" ```.
 
 ## 27. Security Overview
 
-1. **IAM:** Always follow least privilege to reduce blast radius if compromised.
+1. **IAM:** IAM handles access control, while Security focuses on encryption and network protection.
+    - IAM = authorization (who can access what)
+    - Security = encryption + network protection  
 2. **Encryption:** **At Rest** (KMS) and **In Transit** (TLS/HTTPS) are default. 
-  - At Rest: Encrypts data on disk (KMS)
+    - At Rest: Encrypts data on disk (KMS)
     - AWS managed (default )
     - Customer managed (more control)
     
@@ -1657,6 +1644,11 @@ Since DynamoDB is schemaless, you can add attributes at any time.
   | 102 | ✅ | ✅ | ❌ | ❌ |
   | 103 | ✅ | ✅ | ✅ | ✅ |
 
+- **Solution — Version your schema in code:**
+  - Add a `version` attribute to every item (e.g., `version: 1`, `version: 2`)
+  - In your application code, check the version and handle old items gracefully
+  - Never rely on DynamoDB to enforce structure — that responsibility belongs to your app
+
 
 ---
 
@@ -1666,9 +1658,9 @@ Think of DR like this: "What happens if something goes terribly wrong?"
 - **PITR:** Restores your table to any point in time within the last 35 days. (See [Point-in-Time Recovery (PITR)](#19-backup--restore))
 
 - **Multi-Region:** Use Global Tables to ensure your application can failover to a different region instantly.
-  - PITR protects against human mistakes.
+  - **Protection:** PITR protects against human mistakes.
   - Global Tables protects against AWS infrastructure failures — when an entire region goes down.
-  - **What are Global Tables?** (See [Global Tables](#33-global-tables))
+  - **What are Global Tables?** (See [Global Tables](#30-global-tables-conflict-resolution))
 
 - **RTO/RPO:** Define your Recovery Time and Recovery Point objectives early.
   - **RPO — Recovery Point Objective** = Maximum age of data you can restore from (past focused)
@@ -1759,28 +1751,30 @@ For large-scale migrations (SQL to DynamoDB):
 ## 35. Write & Read Amplification
 
 - **Write Amplification:** Every GSI you add increases the cost of a write, as DynamoDB must update the index as well.
+  - See [Secondary Index Comparison (LSI vs GSI)](#17-secondary-index-comparison-lsi-vs-gsi) for GSI cost details.
+  - See [Cost Optimization](#22-cost-optimization) for how to reduce write costs.
 
-- **Read Amplification:** Fetching a 400KB item when you only need one field is wasteful.
-**Solution:** Use **Projection Expressions** to retrieve only the data you need.
+- **Read Amplification:** Fetching a 400KB item when you only need one field is wasteful. Use `ProjectionExpression` to retrieve only the fields you need.
+  - See [Cost Optimization](#22-cost-optimization) for how item size affects RCU consumption and cost.
+  - Each additional GSI increases write amplification linearly
 
----
-
-## 36. Secondary Index Projections
-
-When creating a GSI, choose what data to copy into it:
-
-- **KEYS_ONLY:** Smallest index size, lowest cost.
-- **INCLUDE:** Only the specific attributes you query frequently.
-- **ALL:** Most flexible, but most expensive.
 
 ---
 
-## 37. Distributed System Thinking
+## 36. Distributed System Thinking
 
-DynamoDB is not a traditional SQL server; it is a massive distributed fleet.
+DynamoDB works differently. It runs across thousands of servers distributed across multiple data centres. Your data is automatically split and replicated across these servers. This is what makes DynamoDB highly available, fast, and scalable — but it also means you need to think about three things differently.
 
-- **Design for failure:** Assume retries will happen.
-- **Embrace Eventual Consistency:** It provides the highest availability and lowest cost.
-- **Focus on Throughput:** Success in DynamoDB is measured by how efficiently you use your RCU and WCU.
+- **Design for failure:** In a distributed system, partial failures are not exceptional events — they are routine. A server can go down, a network packet can drop, or a request can time out at any moment.
+  - **What this means:**
+    - Never assume a request will succeed on the first attempt
+    - Always write code that handles failures gracefully
+    - Use retry logic with exponential backoff — wait a little, retry, wait longer, retry again
+    - Systems should tolerate partial failures instead of assuming full success
+    - Never assume all operations succeed; always design for partial success
+  - **The practical shortcut:** The official AWS SDK has retry logic built in. As long as you use the SDK correctly, it handles most of this automatically. 
+
+- **Embrace Eventual Consistency:** It provides the highest availability and lowest cost. (See [Section 12: Consistency Models](#12-consistency-models))
+- **Focus on Throughput:** Success in DynamoDB is measured by how efficiently you use your RCU and WCU. (See [Section 22: Cost Optimization](#22-cost-optimization))
 
 ---

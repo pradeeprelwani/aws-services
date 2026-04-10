@@ -6,56 +6,36 @@
   </defs>
   <rect width="100%" height="100%" fill="#f4f4f4"/>
   <rect width="100%" height="50" fill="#232F3E"/>
-  <text x="20" y="32" font-family="Arial" font-size="20" fill="#ffffff" font-weight="bold">18. PartiQL: SQL-Compatible Query Internal Flow</text>
+  <text x="20" y="32" font-family="Arial" font-size="20" fill="#ffffff" font-weight="bold">18. PartiQL: SQL Interface for DynamoDB</text>
+  
+  <!-- SQL Input -->
+  <rect x="250" y="80" width="300" height="80" rx="10" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="400" y="115" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">SELECT * FROM "Orders"</text>
+  <text x="400" y="135" text-anchor="middle" font-family="Arial" font-size="11">WHERE userId = '123'</text>
 
-  <!-- Query Request -->
-  <rect x="300" y="80" width="200" height="80" rx="10" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
-  <text x="400" y="110" text-anchor="middle" font-family="Courier New" font-size="13" font-weight="bold">SELECT * FROM "Orders"</text>
-  <text x="400" y="125" text-anchor="middle" font-family="Courier New" font-size="11">WHERE "UserId" = '123'</text>
-  <text x="400" y="140" text-anchor="middle" font-family="Arial" font-size="10" fill="#666">(Standard SQL Syntax)</text>
+  <!-- PartiQL Engine -->
+  <path d="M400,180 L580,250 L400,320 L220,170 Z" fill="#fff2cc" stroke="#d6b656" stroke-width="2" transform="translate(0,20)"/>
+  <text x="400" y="230" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">PartiQL Engine</text>
+  <text x="400" y="245" text-anchor="middle" font-family="Arial" font-size="11">SQL-to-API Transpiler</text>
+  <line x1="400" y1="160" x2="400" y2="180" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
 
-  <!-- PartiQL Parser -->
-  <path d="M400,180 L580,250 L400,320 L220,190 Z" fill="#fff2cc" stroke="#d6b656" stroke-width="2" transform="translate(0,20)"/>
-  <text x="400" y="250" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">PartiQL Engine / Parser</text>
-  <text x="400" y="265" text-anchor="middle" font-family="Arial" font-size="11">SQL Schema -> DDB Low Level API</text>
-  <line x1="400" y1="160" x2="400" y2="200" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- Translation Logic -->
+  <rect x="300" y="350" width="200" height="70" fill="#f8cecc" stroke="#b85450" stroke-width="2"/>
+  <text x="400" y="380" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Internal API Call</text>
+  <text x="400" y="395" text-anchor="middle" font-family="Arial" font-size="11">Execute Query / Put / Update</text>
+  <line x1="400" y1="320" x2="400" y2="350" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
 
-  <!-- Planner Logic -->
-  <rect x="300" y="370" width="200" height="70" fill="#f8cecc" stroke="#b85450" stroke-width="2"/>
-  <text x="400" y="400" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Query Planner</text>
-  <text x="400" y="415" text-anchor="middle" font-family="Arial" font-size="11">Map "WHERE" to Partition Key</text>
-  <line x1="400" y1="340" x2="400" y2="370" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- Physical Storage -->
+  <rect x="40" y="460" width="720" height="200" fill="none" stroke="#999" stroke-dasharray="5,5"/>
+  <text x="50" y="480" font-family="Arial" font-size="12" font-weight="bold" fill="#666">DynamoDB Fleet</text>
 
-  <!-- Native Execution Layer -->
-  <rect x="40" y="480" width="720" height="320" fill="none" stroke="#999" stroke-dasharray="5,5"/>
-  <text x="50" y="500" font-family="Arial" font-size="12" font-weight="bold" fill="#666">Native DynamoDB Execution</text>
-
-  <!-- Native API Call -->
-  <rect x="250" y="530" width="300" height="120" rx="8" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
-  <text x="400" y="565" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">DynamoDB: Query API</text>
-  <rect x="270" y="585" width="260" height="50" fill="#fff" opacity="0.6" rx="4"/>
-  <text x="400" y="605" text-anchor="middle" font-family="Courier New" font-size="11">KeyCondition: UserId = :u</text>
-  <text x="400" y="620" text-anchor="middle" font-family="Arial" font-size="10">Cost: Metered in RCU/WCU</text>
-
-  <!-- Data Results -->
-  <rect x="100" y="680" width="180" height="80" fill="#f5f5f5" stroke="#666" stroke-width="2"/>
-  <text x="190" y="715" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">Batch 1 Result</text>
-  <text x="190" y="735" text-anchor="middle" font-family="Arial" font-size="11">Flattened Attributes</text>
-
-  <rect x="520" y="680" width="180" height="80" fill="#f5f5f5" stroke="#666" stroke-width="2"/>
-  <text x="610" y="715" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">Batch 2 Result</text>
-  <text x="610" y="735" text-anchor="middle" font-family="Arial" font-size="11">Joined Results</text>
-
-  <!-- Connection to Results -->
-  <line x1="400" y1="650" x2="190" y2="680" stroke="#000" stroke-width="1.5" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
-  <line x1="400" y1="650" x2="610" y2="680" stroke="#000" stroke-width="1.5" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
-
-  <!-- Flow Line -->
-  <line x1="400" y1="440" x2="400" y2="530" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <rect x="250" y="520" width="300" height="100" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="400" y="575" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">NoSQL Storage Engine</text>
+  <line x1="400" y1="420" x2="400" y2="520" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
 
   <!-- Legend -->
-  <rect x="580" y="370" width="180" height="70" fill="#f9f9f9" stroke="#ddd" />
-  <text x="590" y="390" font-family="Arial" font-size="11" font-weight="bold">Trade-offs:</text>
-  <text x="590" y="405" font-family="Arial" font-size="11">- Familiar SQL syntax</text>
-  <text x="590" y="420" font-family="Arial" font-size="11">- Slight parsing overhead</text>
+  <rect x="100" y="700" width="600" height="100" fill="#f9f9f9" stroke="#ddd" />
+  <text x="120" y="725" font-family="Arial" font-size="12" font-weight="bold">Usage Considerations:</text>
+  <text x="120" y="750" font-family="Arial" font-size="11">- Great for: Ad-hoc debugging, relational background migrations.</text>
+  <text x="120" y="770" font-family="Arial" font-size="11">- Caution: Still adheres to RCU/WCU and 1MB limits. Hidden Scans possible.</text>
 </svg>

@@ -3,77 +3,45 @@
     <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
       <path d="M0,0 L0,6 L9,3 z" fill="#000" />
     </marker>
-    <linearGradient id="pitrGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" style="stop-color:#d5e8d4;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#82b366;stop-opacity:1" />
-    </linearGradient>
   </defs>
   <rect width="100%" height="100%" fill="#f4f4f4"/>
   <rect width="100%" height="50" fill="#232F3E"/>
-  <text x="20" y="32" font-family="Arial" font-size="20" fill="#ffffff" font-weight="bold">19. Backup &amp; Restore Strategy (PITR vs On-Demand)</text>
-
-  <!-- Section 1: Backup Mechanisms -->
-  <rect x="40" y="70" width="720" height="230" fill="none" stroke="#999" stroke-dasharray="5,5"/>
-  <text x="50" y="90" font-family="Arial" font-size="12" font-weight="bold" fill="#666">Continuous Data Protection Layer</text>
-
-  <!-- Timeline -->
-  <line x1="80" y1="220" x2="720" y2="220" stroke="#545B64" stroke-width="4"/>
-  <text x="80" y="250" font-family="Arial" font-size="11">35 Days Ago</text>
-  <text x="680" y="250" font-family="Arial" font-size="11" text-anchor="end">Now (T0)</text>
-
-  <!-- PITR Bar -->
-  <rect x="80" y="195" width="640" height="15" fill="url(#pitrGradient)" opacity="0.6"/>
-  <text x="400" y="190" text-anchor="middle" font-family="Arial" font-size="10" font-weight="bold" fill="#2ca02c">PITR Continuous Backup (Every transaction recorded)</text>
+  <text x="20" y="32" font-family="Arial" font-size="20" fill="#ffffff" font-weight="bold">19. Backup &amp; Restore: PITR vs On-Demand</text>
+  
+  <!-- Main Database -->
+  <rect x="300" y="80" width="200" height="80" rx="10" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="400" y="125" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">Live Table</text>
 
   <!-- On-Demand Snapshot -->
-  <path d="M 200 220 L 200 120" stroke="#f0a30a" stroke-width="2" stroke-dasharray="4,2"/>
-  <rect x="140" y="80" width="120" height="40" rx="5" fill="#fff2cc" stroke="#d6b656" stroke-width="2"/>
-  <text x="200" y="100" text-anchor="middle" font-family="Arial" font-size="10" font-weight="bold">On-Demand</text>
-  <text x="200" y="112" text-anchor="middle" font-family="Arial" font-size="9">(Manual Snapshot)</text>
+  <rect x="50" y="250" width="300" height="150" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="200" y="280" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">On-Demand Snapshot</text>
+  <text x="200" y="310" text-anchor="middle" font-family="Arial" font-size="11">- Manual / Scheduled trigger</text>
+  <text x="200" y="330" text-anchor="middle" font-family="Arial" font-size="11">- Long-term archiving</text>
+  <text x="200" y="350" text-anchor="middle" font-family="Arial" font-size="11">- No performance impact</text>
+  <line x1="350" y1="160" x2="200" y2="250" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
 
-  <!-- Restore Point Callout -->
-  <path d="M 500 220 L 500 140" stroke="#d9534f" stroke-width="2" marker-end="url(#arrow)"/>
-  <circle cx="500" cy="220" r="6" fill="#d9534f"/>
-  <rect x="440" y="100" width="180" height="45" rx="5" fill="#f8cecc" stroke="#b85450" stroke-width="2"/>
-  <text x="530" y="118" text-anchor="middle" font-family="Arial" font-size="10" font-weight="bold">PITR Restore Point</text>
-  <text x="530" y="132" text-anchor="middle" font-family="Arial" font-size="9" fill="#d9534f">Target: 2024-05-20 14:00:00</text>
+  <!-- PITR Continuous -->
+  <rect x="450" y="250" width="300" height="150" fill="#f8cecc" stroke="#b85450" stroke-width="2"/>
+  <text x="600" y="280" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">PITR (Continuous)</text>
+  <text x="600" y="310" text-anchor="middle" font-family="Arial" font-size="11">- Continuous change capture</text>
+  <text x="600" y="330" text-anchor="middle" font-family="Arial" font-size="11">- 35-day rolling window</text>
+  <text x="600" y="350" text-anchor="middle" font-family="Arial" font-size="11">- Restore to any SECOND</text>
+  <line x1="450" y1="160" x2="600" y2="250" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
 
-  <!-- Section 2: Restoration Engine -->
-  <path d="M400,320 L580,390 L400,460 L220,330 Z" fill="#fff2cc" stroke="#d6b656" stroke-width="2" transform="translate(0,20)"/>
-  <text x="400" y="390" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Restoration Planner</text>
-  <text x="400" y="405" text-anchor="middle" font-family="Arial" font-size="11">Log-to-Item Reconciliation</text>
-  <line x1="500" y1="220" x2="400" y2="340" stroke="#000" stroke-width="1.5" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
+  <!-- Restore Process -->
+  <path d="M400,450 L580,520 L400,590 L220,460 Z" fill="#fff2cc" stroke="#d6b656" stroke-width="2" transform="translate(0,20)"/>
+  <text x="400" y="520" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Restore Engine</text>
+  <line x1="200" y1="400" x2="330" y2="520" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="600" y1="400" x2="470" y2="520" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
 
-  <rect x="300" y="490" width="200" height="70" fill="#f8cecc" stroke="#b85450" stroke-width="2"/>
-  <text x="400" y="520" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Provisioning Engine</text>
-  <text x="400" y="535" text-anchor="middle" font-family="Arial" font-size="11">Creates NEW Table Instance</text>
-  <line x1="400" y1="460" x2="400" y2="490" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
-
-  <!-- Section 3: The Result -->
-  <rect x="40" y="590" width="720" height="230" fill="none" stroke="#999" stroke-dasharray="5,5"/>
-  <text x="50" y="610" font-family="Arial" font-size="12" font-weight="bold" fill="#666">Restoration Result: Non-Destructive Isolation</text>
-
-  <!-- Live Table -->
-  <rect x="100" y="650" width="220" height="120" rx="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
-  <text x="210" y="685" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">Live Table (Source)</text>
-  <text x="210" y="705" text-anchor="middle" font-family="Arial" font-size="10">Corrupted Data or</text>
-  <text x="210" y="720" text-anchor="middle" font-family="Arial" font-size="10">Production State</text>
-  <text x="210" y="750" text-anchor="middle" font-family="Arial" font-size="11" fill="#6c8ebf" font-weight="bold">STAYS UNTOUCHED</text>
-
-  <!-- Restored Table -->
-  <rect x="480" y="650" width="220" height="120" rx="8" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
-  <text x="590" y="685" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">Restored Table (New)</text>
-  <text x="590" y="705" text-anchor="middle" font-family="Arial" font-size="10">Clean Snapshot as of</text>
-  <text x="590" y="720" text-anchor="middle" font-family="Arial" font-size="10">Target Timestamp</text>
-  <text x="590" y="750" text-anchor="middle" font-family="Arial" font-size="11" fill="#2ca02c" font-weight="bold">RECOVERED DATA</text>
-
-  <line x1="400" y1="560" x2="590" y2="650" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- Result -->
+  <rect x="300" y="650" width="200" height="80" rx="10" fill="#d5e8d4" stroke="#82b366" stroke-width="2" stroke-dasharray="5,5"/>
+  <text x="400" y="695" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">New Restored Table</text>
+  <line x1="400" y1="610" x2="400" y2="650" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
 
   <!-- Legend -->
-  <rect x="580" y="350" width="180" height="100" fill="#f9f9f9" stroke="#ddd" />
-  <text x="590" y="370" font-family="Arial" font-size="11" font-weight="bold">Key Attributes:</text>
-  <text x="590" y="385" font-family="Arial" font-size="10">- PITR: 35-day history</text>
-  <text x="590" y="400" font-family="Arial" font-size="10">- Zero Perf. Impact</text>
-  <text x="590" y="415" font-family="Arial" font-size="10">- Restoration → NEW table</text>
-  <text x="590" y="430" font-family="Arial" font-size="10">- Backup cost: Storage only</text>
+  <rect x="100" y="750" width="600" height="80" fill="#f9f9f9" stroke="#ddd" />
+  <text x="120" y="775" font-family="Arial" font-size="12" font-weight="bold">Recovery Goals:</text>
+  <text x="120" y="800" font-family="Arial" font-size="11">- PITR: Guard against human error / software bugs.</text>
+  <text x="450" y="800" font-family="Arial" font-size="11">- On-Demand: Compliance / Audits.</text>
 </svg>

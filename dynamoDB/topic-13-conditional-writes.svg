@@ -6,58 +6,46 @@
   </defs>
   <rect width="100%" height="100%" fill="#f4f4f4"/>
   <rect width="100%" height="50" fill="#232F3E"/>
-  <text x="20" y="32" font-family="Arial" font-size="20" fill="#ffffff" font-weight="bold">13. Optimistic Locking &amp; Conditional Writes</text>
-
-  <!-- Concurrent User Requests -->
-  <rect x="70" y="80" width="180" height="80" rx="10" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
-  <text x="160" y="115" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">User A (Read v1)</text>
+  <text x="20" y="32" font-family="Arial" font-size="20" fill="#ffffff" font-weight="bold">13. Conditional Writes &amp; Optimistic Locking</text>
   
-  <rect x="550" y="80" width="180" height="80" rx="10" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
-  <text x="640" y="115" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">User B (Read v1)</text>
+  <!-- Concurrent Users -->
+  <rect x="100" y="80" width="200" height="60" rx="10" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="200" y="115" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">User A (v1)</text>
 
-  <!-- Logic Evaluator Diamond -->
-  <path d="M400,160 L580,230 L400,300 L220,170 Z" fill="#fff2cc" stroke="#d6b656" stroke-width="2" transform="translate(0,60)"/>
-  <text x="400" y="270" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Condition Evaluator</text>
-  <text x="400" y="285" text-anchor="middle" font-family="Arial" font-size="11">version == :expected</text>
+  <rect x="500" y="80" width="200" height="60" rx="10" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="600" y="115" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">User B (v1)</text>
+
+  <!-- Timeline -->
+  <line x1="200" y1="140" x2="200" y2="400" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="600" y1="140" x2="600" y2="550" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- User A Writes First -->
+  <rect x="150" y="250" width="100" height="40" fill="#f8cecc" stroke="#b85450" stroke-width="2"/>
+  <text x="200" y="275" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">Update v1->v2</text>
+
+  <!-- Condition Check Logic -->
+  <path d="M400,320 L500,370 L400,420 L300,370 Z" fill="#fff2cc" stroke="#d6b656" stroke-width="2" />
+  <text x="400" y="375" text-anchor="middle" font-family="Arial" font-size="11" font-weight="bold">IF ver == 1</text>
   
-  <!-- Connections to Evaluator -->
-  <line x1="160" y1="160" x2="330" y2="240" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <line x1="640" y1="160" x2="470" y2="240" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="250" y1="270" x2="300" y2="370" stroke="#000" stroke-width="1" />
+  <line x1="400" y1="420" x2="400" y2="450" stroke="#2e7d32" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="450" y="445" font-family="Arial" font-size="12" fill="#2e7d32" font-weight="bold">SUCCESS (v2 Saved)</text>
 
-  <!-- Internal Lock Processor -->
-  <rect x="300" y="380" width="200" height="70" fill="#f8cecc" stroke="#b85450" stroke-width="2"/>
-  <text x="400" y="410" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Transaction Manager</text>
-  <text x="400" y="425" text-anchor="middle" font-family="Arial" font-size="11">Atomic "Check-then-Set"</text>
-  <line x1="400" y1="330" x2="400" y2="380" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- User B Tries to Write -->
+  <rect x="550" y="450" width="100" height="40" fill="#f8cecc" stroke="#b85450" stroke-width="2" opacity="0.6"/>
+  <text x="600" y="475" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">Update v1->v2</text>
 
-  <!-- Storage Partition Container -->
-  <rect x="40" y="480" width="720" height="320" fill="none" stroke="#999" stroke-dasharray="5,5"/>
-  <text x="50" y="500" font-family="Arial" font-size="12" font-weight="bold" fill="#666">DynamoDB Storage Layer</text>
-
-  <!-- Success Scenario -->
-  <rect x="70" y="530" width="310" height="120" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
-  <text x="225" y="560" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">Result: SUCCESS (User A)</text>
-  <text x="225" y="585" font-family="Arial" font-size="11" fill="#82b366" font-weight="bold">v1 -> v2 Updated</text>
-  <text x="225" y="610" font-family="Arial" font-size="10">Match: version in DB was 1</text>
-
-  <!-- Failure Scenario -->
-  <rect x="420" y="530" width="310" height="120" fill="#f5f5f5" stroke="#666" stroke-width="2"/>
-  <text x="575" y="560" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">Result: FAIL (User B)</text>
-  <text x="575" y="585" font-family="Arial" font-size="11" fill="#d9534f" font-weight="bold">ConditionalCheckFailedException</text>
-  <text x="575" y="610" font-family="Arial" font-size="10">Mismatch: DB is now v2, User B sent v1</text>
-
-  <!-- Conflict Resolution Loop -->
-  <polygon points="250,680 550,680 520,760 220,760" fill="#e1d5e7" stroke="#9673a6" stroke-width="2"/>
-  <text x="385" y="715" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Retry-on-Conflict Loop</text>
-  <text x="385" y="735" text-anchor="middle" font-family="Arial" font-size="11">App reads v2 -> merges changes -> tries v2->v3</text>
-
-  <!-- Flow Connections -->
-  <line x1="400" y1="450" x2="225" y2="530" stroke="#000" stroke-width="1.5" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
-  <line x1="400" y1="450" x2="575" y2="530" stroke="#000" stroke-width="1.5" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
+  <path d="M400,500 L500,550 L400,600 L300,550 Z" fill="#fff2cc" stroke="#d6b656" stroke-width="2" />
+  <text x="400" y="555" text-anchor="middle" font-family="Arial" font-size="11" font-weight="bold">IF ver == 1</text>
+  
+  <line x1="550" y1="470" x2="500" y2="550" stroke="#000" stroke-width="1" />
+  <line x1="400" y1="600" x2="400" y2="650" stroke="#b91c1c" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="450" y="645" font-family="Arial" font-size="12" fill="#b91c1c" font-weight="bold">REJECTED (Version is now 2)</text>
 
   <!-- Legend -->
-  <rect x="580" y="350" width="180" height="70" fill="#f9f9f9" stroke="#ddd" />
-  <text x="590" y="370" font-family="Arial" font-size="11" font-weight="bold">Rule:</text>
-  <text x="590" y="385" font-family="Arial" font-size="11">- Prevent Lost Updates</text>
-  <text x="590" y="400" font-family="Arial" font-size="11">- Atomic Versioning</text>
+  <rect x="100" y="700" width="600" height="100" fill="#f9f9f9" stroke="#ddd" />
+  <text x="120" y="725" font-family="Arial" font-size="12" font-weight="bold">Optimistic Locking Pattern:</text>
+  <text x="120" y="750" font-family="Arial" font-size="11">- Prevent "Lost Updates" in concurrent environments</text>
+  <text x="120" y="770" font-family="Arial" font-size="11">- Use ConditionExpression: "version = :expectedVersion"</text>
+  <text x="550" y="750" font-family="Arial" font-size="11" font-weight="bold">ACID Compliant</text>
 </svg>
