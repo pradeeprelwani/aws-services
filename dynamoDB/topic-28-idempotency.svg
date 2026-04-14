@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 820">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#000" />
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="#f4f4f4"/>
+  <rect width="100%" height="50" fill="#232F3E"/>
+  <text x="20" y="32" font-family="Arial" font-size="20" fill="#ffffff" font-weight="bold">28. Idempotency Keys</text>
+
+  <!-- Problem Section -->
+  <rect x="40" y="60" width="720" height="180" rx="8" fill="#f8cecc" stroke="#b85450" stroke-width="2"/>
+  <text x="400" y="84" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold" fill="#b85450">❌ The Problem: Duplicate Writes on Retry</text>
+  <line x1="80" y1="92" x2="720" y2="92" stroke="#b85450" stroke-width="1"/>
+  <text x="80" y="112" font-family="Arial" font-size="12" font-weight="bold">WITHOUT Idempotency Keys (Payment Scenario):</text>
+  <text x="80" y="132" font-family="Arial" font-size="11">Step 1: User clicks "Pay ₹1000" → Client sends request to API</text>
+  <text x="80" y="150" font-family="Arial" font-size="11">Step 2: API → DynamoDB writes payment → SUCCESS (but network timeout occurs)</text>
+  <text x="80" y="168" font-family="Arial" font-size="11">Step 3: Client sees timeout → Assumes failure → RETRIES request</text>
+  <text x="80" y="186" font-family="Arial" font-size="11">Step 4: DynamoDB writes payment AGAIN → User charged TWICE! 💸</text>
+  <text x="80" y="210" font-family="Arial" font-size="12" fill="#b85450" font-weight="bold">Result: Data corruption — duplicate payment. Critical bug in financial systems!</text>
+
+  <line x1="400" y1="240" x2="400" y2="270" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Solution Section -->
+  <rect x="40" y="270" width="720" height="60" rx="8" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="400" y="294" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">✅ Solution: Idempotency Key (requestId)</text>
+  <text x="80" y="315" font-family="Arial" font-size="11">Generate a unique requestId per operation → store it in DynamoDB → check before writing</text>
+  <line x1="400" y1="330" x2="400" y2="360" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Flow Diagram -->
+  <rect x="40" y="360" width="720" height="290" rx="8" fill="none" stroke="#999" stroke-dasharray="5,5"/>
+  <text x="60" y="382" font-family="Arial" font-size="12" font-weight="bold" fill="#666">Idempotent Write Flow:</text>
+
+  <!-- Step boxes -->
+  <rect x="280" y="390" width="240" height="55" rx="6" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="400" y="412" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">Client sends request</text>
+  <text x="400" y="430" text-anchor="middle" font-family="Arial" font-size="11">{ requestId: "txn-12345", amount: 1000 }</text>
+  <line x1="400" y1="445" x2="400" y2="475" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <rect x="200" y="475" width="400" height="55" rx="6" fill="#fff2cc" stroke="#d6b656" stroke-width="2"/>
+  <text x="400" y="497" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">DynamoDB ConditionExpression Check</text>
+  <text x="400" y="515" text-anchor="middle" font-family="Arial" font-size="11">attribute_not_exists(requestId)</text>
+  <line x1="400" y1="530" x2="400" y2="555" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Branch -->
+  <polygon points="400,555 520,600 400,645 280,600" fill="#e1d5e7" stroke="#9673a6" stroke-width="2"/>
+  <text x="400" y="596" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">requestId</text>
+  <text x="400" y="613" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">exists?</text>
+
+  <!-- No path -->
+  <line x1="280" y1="600" x2="120" y2="600" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="200" y="590" text-anchor="middle" font-family="Arial" font-size="11" fill="#82b366">NO</text>
+  <rect x="40" y="575" width="80" height="50" rx="6" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="80" y="598" text-anchor="middle" font-family="Arial" font-size="11" font-weight="bold">Write</text>
+  <text x="80" y="614" text-anchor="middle" font-family="Arial" font-size="11">Success ✔</text>
+
+  <!-- Yes path -->
+  <line x1="520" y1="600" x2="680" y2="600" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="600" y="590" text-anchor="middle" font-family="Arial" font-size="11" fill="#b85450">YES</text>
+  <rect x="680" y="575" width="80" height="50" rx="6" fill="#f8cecc" stroke="#b85450" stroke-width="2"/>
+  <text x="720" y="598" text-anchor="middle" font-family="Arial" font-size="11" font-weight="bold">Reject</text>
+  <text x="720" y="614" text-anchor="middle" font-family="Arial" font-size="11">No duplicate</text>
+
+  <!-- Summary -->
+  <rect x="40" y="680" width="720" height="100" fill="#f9f9f9" stroke="#ddd"/>
+  <text x="60" y="702" font-family="Arial" font-size="12" font-weight="bold">Key Takeaways:</text>
+  <text x="60" y="722" font-family="Arial" font-size="11">• Use idempotency keys for critical ops: payments, order creation, balance updates</text>
+  <text x="60" y="740" font-family="Arial" font-size="11">• Generate unique requestId client-side (UUID) and include it in every request payload</text>
+  <text x="60" y="758" font-family="Arial" font-size="11">• ConditionExpression: "attribute_not_exists(requestId)" → ensures first write wins always</text>
+  <text x="60" y="776" font-family="Arial" font-size="11">• Works perfectly with DynamoDB (uses optimistic locking approach — no DB locking needed)</text>
+</svg>

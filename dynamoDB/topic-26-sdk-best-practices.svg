@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 900">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#000" />
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="#f4f4f4"/>
+  <rect width="100%" height="50" fill="#232F3E"/>
+  <text x="20" y="32" font-family="Arial" font-size="20" fill="#ffffff" font-weight="bold">26. SDK Best Practices</text>
+
+  <!-- App Entry -->
+  <rect x="280" y="70" width="240" height="60" rx="10" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="400" y="96" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">Your Node.js App</text>
+  <text x="400" y="114" text-anchor="middle" font-family="Arial" font-size="11">(AWS SDK v3 — @aws-sdk/client-dynamodb)</text>
+  <line x1="400" y1="130" x2="400" y2="160" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Practice 1: Connection Reuse -->
+  <rect x="60" y="160" width="680" height="100" rx="8" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="400" y="184" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">✅ Practice 1: Connection Reuse (Keep-Alive)</text>
+  <text x="90" y="205" font-family="Arial" font-size="11">• Without: Each request → new TCP + TLS handshake → +50–200ms overhead</text>
+  <text x="90" y="222" font-family="Arial" font-size="11">• With: https.Agent({ keepAlive: true }) — reuse same connection across requests</text>
+  <text x="90" y="239" font-family="Arial" font-size="11">  new NodeHttpHandler({ httpsAgent: agent }) → inject into DynamoDBClient config</text>
+  <line x1="400" y1="260" x2="400" y2="290" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Practice 2: DocumentClient -->
+  <rect x="60" y="290" width="680" height="90" rx="8" fill="#fff2cc" stroke="#d6b656" stroke-width="2"/>
+  <text x="400" y="314" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">✅ Practice 2: Use DynamoDBDocumentClient</text>
+  <text x="90" y="335" font-family="Arial" font-size="11">• Raw client requires typed AttributeValues (e.g., { S: "value" }) — error-prone</text>
+  <text x="90" y="353" font-family="Arial" font-size="11">• DocumentClient auto-marshals JS objects ↔ DynamoDB types — cleaner code</text>
+  <text x="90" y="371" font-family="Arial" font-size="11">  DynamoDBDocumentClient.from(client) — wraps base client</text>
+  <line x1="400" y1="380" x2="400" y2="410" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Practice 3: Batch Operations -->
+  <rect x="60" y="410" width="680" height="90" rx="8" fill="#f8cecc" stroke="#b85450" stroke-width="2"/>
+  <text x="400" y="434" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">✅ Practice 3: Use BatchGetItem / BatchWriteItem</text>
+  <text x="90" y="455" font-family="Arial" font-size="11">• Never make one API call per item — 1000 items = 1000 API calls (slow, expensive)</text>
+  <text x="90" y="473" font-family="Arial" font-size="11">• BatchGetItem: up to 100 items/call | BatchWriteItem: up to 25 items/call</text>
+  <text x="90" y="491" font-family="Arial" font-size="11">• Use Promise.all() for parallel execution across multiple batches</text>
+  <line x1="400" y1="500" x2="400" y2="530" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Practice 4: Singleton Client -->
+  <rect x="60" y="530" width="680" height="90" rx="8" fill="#e1d5e7" stroke="#9673a6" stroke-width="2"/>
+  <text x="400" y="554" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">✅ Practice 4: Singleton Client Pattern</text>
+  <text x="90" y="575" font-family="Arial" font-size="11">• Do NOT create a new DynamoDBClient() inside every Lambda handler or request</text>
+  <text x="90" y="593" font-family="Arial" font-size="11">• Initialize once outside handler → reused across warm invocations (faster)</text>
+  <text x="90" y="611" font-family="Arial" font-size="11">  const client = new DynamoDBClient({}) // outside handler function</text>
+  <line x1="400" y1="620" x2="400" y2="650" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Practice 5: Retry / Exponential Backoff -->
+  <rect x="60" y="650" width="680" height="80" rx="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="400" y="674" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">✅ Practice 5: SDK Built-in Retry with Exponential Backoff</text>
+  <text x="90" y="695" font-family="Arial" font-size="11">• AWS SDK v3 retries throttled requests automatically (default maxAttempts: 3)</text>
+  <text x="90" y="713" font-family="Arial" font-size="11">• Customize: new DynamoDBClient({ maxAttempts: 5 }) for high-traffic systems</text>
+
+  <!-- Summary -->
+  <rect x="60" y="760" width="680" height="70" fill="#f9f9f9" stroke="#ddd"/>
+  <text x="90" y="782" font-family="Arial" font-size="12" font-weight="bold">Summary — SDK Performance Pillars:</text>
+  <text x="90" y="800" font-family="Arial" font-size="11">Connection Reuse → lower latency | DocumentClient → clean code | Batch → fewer API calls</text>
+  <text x="90" y="818" font-family="Arial" font-size="11">Singleton Client → warm reuse | Auto Retry → resilience against throttling</text>
+</svg>

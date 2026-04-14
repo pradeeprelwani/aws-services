@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 880">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#000" />
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="#f4f4f4"/>
+  <rect width="100%" height="50" fill="#232F3E"/>
+  <text x="20" y="32" font-family="Arial" font-size="20" fill="#ffffff" font-weight="bold">35. Write &amp; Read Amplification</text>
+
+  <!-- Definition -->
+  <rect x="40" y="60" width="720" height="65" rx="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="400" y="84" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">Amplification = "1 Logical Request → Multiple Actual Operations"</text>
+  <text x="60" y="105" font-family="Arial" font-size="11">• Write Amplification: 1 write → updates base table + all GSIs = multiple writes consumed</text>
+  <text x="60" y="122" font-family="Arial" font-size="11">• Read Amplification: 1 read → fetches entire large item when only 1 field was needed</text>
+  <line x1="400" y1="125" x2="400" y2="155" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Write Amplification -->
+  <rect x="40" y="155" width="720" height="260" rx="8" fill="#f8cecc" stroke="#b85450" stroke-width="2"/>
+  <text x="400" y="179" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">Write Amplification — Every GSI = Extra Write Cost</text>
+  <line x1="60" y1="187" x2="740" y2="187" stroke="#b85450" stroke-width="1"/>
+  
+  <!-- Visual write amplification -->
+  <rect x="320" y="195" width="160" height="45" rx="6" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="400" y="215" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">PutItem / UpdateItem</text>
+  <text x="400" y="232" text-anchor="middle" font-family="Arial" font-size="11">(1 logical write)</text>
+  
+  <!-- Arrows to table + GSIs -->
+  <line x1="350" y1="240" x2="200" y2="285" stroke="#b85450" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="400" y1="240" x2="400" y2="285" stroke="#b85450" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="450" y1="240" x2="600" y2="285" stroke="#b85450" stroke-width="1.5" marker-end="url(#arrow)"/>
+  
+  <rect x="80" y="285" width="220" height="45" rx="6" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="190" y="305" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">Base Table Write</text>
+  <text x="190" y="323" text-anchor="middle" font-family="Arial" font-size="11">1 WCU consumed</text>
+  
+  <rect x="320" y="285" width="160" height="45" rx="6" fill="#fff2cc" stroke="#d6b656" stroke-width="2"/>
+  <text x="400" y="305" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">GSI-1 Write</text>
+  <text x="400" y="323" text-anchor="middle" font-family="Arial" font-size="11">1 WCU consumed</text>
+  
+  <rect x="510" y="285" width="210" height="45" rx="6" fill="#f8cecc" stroke="#b85450" stroke-width="2"/>
+  <text x="615" y="305" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">GSI-2 Write</text>
+  <text x="615" y="323" text-anchor="middle" font-family="Arial" font-size="11">1 WCU consumed</text>
+  
+  <text x="60" y="360" font-family="Arial" font-size="11">• 1 write + 2 GSIs = 3 WCUs consumed per logical write (3x cost!)</text>
+  <text x="60" y="378" font-family="Arial" font-size="11">• 1 write + 5 GSIs = 6 WCUs consumed — cost multiplies linearly with GSI count</text>
+  <text x="60" y="396" font-family="Arial" font-size="11">• Solution: Only create GSIs you actually need | Only project attributes you query</text>
+  <text x="60" y="414" font-family="Arial" font-size="11">  ProjectionType: KEYS_ONLY (cheapest) or INCLUDE (specific attrs) instead of ALL</text>
+  <line x1="400" y1="415" x2="400" y2="445" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Read Amplification -->
+  <rect x="40" y="445" width="720" height="230" rx="8" fill="#fff2cc" stroke="#d6b656" stroke-width="2"/>
+  <text x="400" y="469" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">Read Amplification — Fetching Too Much Data</text>
+  <line x1="60" y1="477" x2="740" y2="477" stroke="#d6b656" stroke-width="1"/>
+  
+  <text x="60" y="497" font-family="Arial" font-size="12" font-weight="bold">❌ Without ProjectionExpression (Read Amplification):</text>
+  <rect x="60" y="505" width="680" height="50" rx="4" fill="#fff" stroke="#d6b656" stroke-width="1"/>
+  <text x="80" y="526" font-family="Arial" font-size="11">GetItem request for 1 field (name) → DynamoDB reads the ENTIRE 400KB item from disk</text>
+  <text x="80" y="546" font-family="Arial" font-size="11">You needed: 10 bytes of name | You paid for: 400KB (100x amplification!) | RCUs: 100 (400÷4)</text>
+  
+  <text x="60" y="575" font-family="Arial" font-size="12" font-weight="bold">✅ With ProjectionExpression (Optimized):</text>
+  <rect x="60" y="583" width="680" height="50" rx="4" fill="#e8f5e9" stroke="#82b366" stroke-width="1"/>
+  <text x="80" y="604" font-family="Arial" font-size="11">GetItem with ProjectionExpression: "name, email" → DynamoDB still reads full item but returns 2 attrs</text>
+  <text x="80" y="624" font-family="Arial" font-size="11">⚠ Note: DynamoDB reads full item internally but filters before returning — saves bandwidth, not RCU</text>
+  
+  <text x="60" y="655" font-family="Arial" font-size="11">💡 Real optimization: Keep items SMALL (split large items or use S3 for blobs) → fewer RCUs consumed</text>
+  <line x1="400" y1="675" x2="400" y2="705" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Summary -->
+  <rect x="40" y="705" width="720" height="145" fill="#f9f9f9" stroke="#ddd" rx="8"/>
+  <text x="60" y="727" font-family="Arial" font-size="12" font-weight="bold">Optimization Rules:</text>
+  <text x="60" y="748" font-family="Arial" font-size="11">Write Amplification → Reduce GSI count | Use KEYS_ONLY or INCLUDE projection on GSIs</text>
+  <text x="60" y="766" font-family="Arial" font-size="11">Read Amplification  → Keep item size small | Use S3 for large blobs | Store summary in DDB</text>
+  <text x="60" y="784" font-family="Arial" font-size="11">Monitor: CloudWatch ConsumedWriteCapacity — sudden spike after GSI add = write amplification</text>
+  <text x="60" y="802" font-family="Arial" font-size="11">Golden Rule: Every GSI adds: storage cost + write cost + maintenance overhead</text>
+  <text x="60" y="820" font-family="Arial" font-size="11">Before adding a GSI → ask: "Can I redesign the Sort Key to avoid this index instead?"</text>
+  <text x="60" y="838" font-family="Arial" font-size="11">See Section 17 (LSI vs GSI) and Section 22 (Cost Optimization) for detailed GSI cost calculations</text>
+</svg>

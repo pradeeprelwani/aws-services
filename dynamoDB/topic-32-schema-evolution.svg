@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 880">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#000" />
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="#f4f4f4"/>
+  <rect width="100%" height="50" fill="#232F3E"/>
+  <text x="20" y="32" font-family="Arial" font-size="20" fill="#ffffff" font-weight="bold">32. Schema Evolution</text>
+
+  <!-- The Core Problem -->
+  <rect x="40" y="60" width="720" height="75" rx="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="400" y="84" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">DynamoDB is Schemaless — But That Creates a Challenge</text>
+  <text x="60" y="105" font-family="Arial" font-size="11">• You CAN add new attributes at any time to new items without modifying the table</text>
+  <text x="60" y="122" font-family="Arial" font-size="11">• Problem: OLD items don't have new attributes → your app must handle both old and new formats</text>
+  <line x1="400" y1="135" x2="400" y2="165" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- The Real Problem: Mixed Data -->
+  <rect x="40" y="165" width="720" height="160" rx="8" fill="#f8cecc" stroke="#b85450" stroke-width="2"/>
+  <text x="400" y="189" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">❌ The Schema Drift Problem</text>
+  <text x="60" y="210" font-family="Arial" font-size="11" font-weight="bold">Your Users table evolves over time — different items have different shapes:</text>
+  <!-- Table header -->
+  <rect x="60" y="220" width="680" height="25" fill="#fff" stroke="#ccc" stroke-width="1"/>
+  <text x="130" y="237" text-anchor="middle" font-family="Arial" font-size="11" font-weight="bold">UserID</text>
+  <text x="280" y="237" text-anchor="middle" font-family="Arial" font-size="11" font-weight="bold">Name</text>
+  <text x="400" y="237" text-anchor="middle" font-family="Arial" font-size="11" font-weight="bold">Email</text>
+  <text x="530" y="237" text-anchor="middle" font-family="Arial" font-size="11" font-weight="bold">Phone</text>
+  <text x="670" y="237" text-anchor="middle" font-family="Arial" font-size="11" font-weight="bold">Is Active</text>
+  <rect x="60" y="245" width="680" height="22" fill="#ffe0e0" stroke="#ccc" stroke-width="1"/>
+  <text x="130" y="260" text-anchor="middle" font-family="Arial" font-size="11">101</text>
+  <text x="280" y="260" text-anchor="middle" font-family="Arial" font-size="11" fill="#82b366">✔</text>
+  <text x="400" y="260" text-anchor="middle" font-family="Arial" font-size="11" fill="#b85450">—</text>
+  <text x="530" y="260" text-anchor="middle" font-family="Arial" font-size="11" fill="#b85450">—</text>
+  <text x="670" y="260" text-anchor="middle" font-family="Arial" font-size="11" fill="#b85450">—</text>
+  <rect x="60" y="267" width="680" height="22" fill="#fff3e0" stroke="#ccc" stroke-width="1"/>
+  <text x="130" y="282" text-anchor="middle" font-family="Arial" font-size="11">102</text>
+  <text x="280" y="282" text-anchor="middle" font-family="Arial" font-size="11" fill="#82b366">✔</text>
+  <text x="400" y="282" text-anchor="middle" font-family="Arial" font-size="11" fill="#82b366">✔</text>
+  <text x="530" y="282" text-anchor="middle" font-family="Arial" font-size="11" fill="#b85450">—</text>
+  <text x="670" y="282" text-anchor="middle" font-family="Arial" font-size="11" fill="#b85450">—</text>
+  <rect x="60" y="289" width="680" height="22" fill="#e8f5e9" stroke="#ccc" stroke-width="1"/>
+  <text x="130" y="304" text-anchor="middle" font-family="Arial" font-size="11">103</text>
+  <text x="280" y="304" text-anchor="middle" font-family="Arial" font-size="11" fill="#82b366">✔</text>
+  <text x="400" y="304" text-anchor="middle" font-family="Arial" font-size="11" fill="#82b366">✔</text>
+  <text x="530" y="304" text-anchor="middle" font-family="Arial" font-size="11" fill="#82b366">✔</text>
+  <text x="670" y="304" text-anchor="middle" font-family="Arial" font-size="11" fill="#82b366">✔</text>
+  <line x1="400" y1="325" x2="400" y2="355" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Solution 1: Version Attribute -->
+  <rect x="40" y="355" width="720" height="120" rx="8" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="400" y="379" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">✅ Solution 1: Version Your Schema in Code</text>
+  <text x="60" y="400" font-family="Arial" font-size="11">• Add a "schemaVersion" attribute to every item (e.g., schemaVersion: 1, 2, 3)</text>
+  <text x="60" y="418" font-family="Arial" font-size="11">• In your app: read item → check version → apply appropriate transformation</text>
+  <text x="60" y="436" font-family="Arial" font-size="11">• v1 item: { name } | v2 item: { name, email } | v3 item: { name, email, phone, isActive }</text>
+  <text x="60" y="454" font-family="Arial" font-size="11">• Never assume a field exists — always use safe defaults when field is missing</text>
+  <line x1="400" y1="475" x2="400" y2="505" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Solution 2: Lazy Migration -->
+  <rect x="40" y="505" width="720" height="110" rx="8" fill="#fff2cc" stroke="#d6b656" stroke-width="2"/>
+  <text x="400" y="529" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">✅ Solution 2: Lazy Migration (On-Read Upgrade)</text>
+  <text x="60" y="550" font-family="Arial" font-size="11">• When reading an old item: detect old schema version → upgrade in-memory → write back updated item</text>
+  <text x="60" y="568" font-family="Arial" font-size="11">• Benefit: No big-bang migration needed — items self-upgrade as they're accessed over time</text>
+  <text x="60" y="586" font-family="Arial" font-size="11">• Flow: Read item → check schemaVersion &lt; current → add missing defaults → UpdateItem → return</text>
+  <text x="60" y="604" font-family="Arial" font-size="11">• Risk: Items never accessed again stay on old schema — handle in app logic (not a data integrity issue)</text>
+  <line x1="400" y1="615" x2="400" y2="645" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Solution 3: Background Migration -->
+  <rect x="40" y="645" width="720" height="100" rx="8" fill="#e1d5e7" stroke="#9673a6" stroke-width="2"/>
+  <text x="400" y="669" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">✅ Solution 3: Background Batch Migration</text>
+  <text x="60" y="690" font-family="Arial" font-size="11">• For urgent schema changes: run a migration script in background using Scan + UpdateItem</text>
+  <text x="60" y="708" font-family="Arial" font-size="11">• Use parallel workers + BatchWriteItem + pagination (LastEvaluatedKey) to process entire table</text>
+  <text x="60" y="726" font-family="Arial" font-size="11">• Monitor via CloudWatch — set alarm if migration stalls or errors spike</text>
+  <text x="60" y="744" font-family="Arial" font-size="11">• Add ConditionExpression to skip already-migrated items (idempotent migration)</text>
+
+  <!-- Summary -->
+  <rect x="40" y="775" width="720" height="75" fill="#f9f9f9" stroke="#ddd"/>
+  <text x="60" y="797" font-family="Arial" font-size="12" font-weight="bold">Key Rules for Schema Evolution:</text>
+  <text x="60" y="817" font-family="Arial" font-size="11">1. Never rely on DynamoDB to enforce structure — your app code owns schema validation</text>
+  <text x="60" y="835" font-family="Arial" font-size="11">2. Always add schemaVersion to new items | 3. Use safe defaults — never assume field exists</text>
+</svg>

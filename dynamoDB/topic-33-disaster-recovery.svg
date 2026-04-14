@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 900">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#000" />
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="#f4f4f4"/>
+  <rect width="100%" height="50" fill="#232F3E"/>
+  <text x="20" y="32" font-family="Arial" font-size="20" fill="#ffffff" font-weight="bold">33. Disaster Recovery (DR)</text>
+
+  <!-- Overview -->
+  <rect x="40" y="60" width="720" height="65" rx="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="400" y="84" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">Two Things That Can Go Wrong:</text>
+  <text x="60" y="105" font-family="Arial" font-size="11">1. Human mistakes (accidental delete, bug) → Need PITR for point-in-time recovery</text>
+  <text x="60" y="122" font-family="Arial" font-size="11">2. AWS infrastructure failure (region outage) → Need Global Tables for instant failover</text>
+  <line x1="400" y1="125" x2="400" y2="155" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- PITR Block -->
+  <rect x="40" y="155" width="345" height="200" rx="8" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="213" y="179" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">✅ PITR — Point-in-Time Recovery</text>
+  <text x="213" y="197" text-anchor="middle" font-family="Arial" font-size="11" font-weight="bold">Protects against: Human mistakes</text>
+  <text x="60" y="218" font-family="Arial" font-size="11">• Continuous backup enabled automatically</text>
+  <text x="60" y="236" font-family="Arial" font-size="11">• Restore to ANY second in last 35 days</text>
+  <text x="60" y="254" font-family="Arial" font-size="11">• Flow: Bug deletes 1M records at 2:00PM</text>
+  <text x="60" y="272" font-family="Arial" font-size="11">  → Restore to 1:59:59PM → New table created</text>
+  <text x="60" y="290" font-family="Arial" font-size="11">  → All data restored, current table safe</text>
+  <text x="60" y="310" font-family="Arial" font-size="11">  Enable: DynamoDB Console → Backups → PITR</text>
+  <text x="60" y="328" font-family="Arial" font-size="11">  ⚠ Has a small cost based on table size</text>
+
+  <!-- Global Tables Block -->
+  <rect x="415" y="155" width="345" height="200" rx="8" fill="#fff2cc" stroke="#d6b656" stroke-width="2"/>
+  <text x="588" y="179" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">✅ Global Tables — Multi-Region</text>
+  <text x="588" y="197" text-anchor="middle" font-family="Arial" font-size="11" font-weight="bold">Protects against: AWS region outage</text>
+  <text x="425" y="218" font-family="Arial" font-size="11">• Same table in multiple regions — Active-Active</text>
+  <text x="425" y="236" font-family="Arial" font-size="11">• Region goes down → Route 53 routes traffic</text>
+  <text x="425" y="254" font-family="Arial" font-size="11">  to another healthy region instantly</text>
+  <text x="425" y="272" font-family="Arial" font-size="11">• Users feel nothing — seamless failover</text>
+  <text x="425" y="290" font-family="Arial" font-size="11">• Enable: DynamoDB → Global Tables → Add region</text>
+  <text x="425" y="308" font-family="Arial" font-size="11">  + Route 53 Health Checks + Failover routing</text>
+  <text x="425" y="328" font-family="Arial" font-size="11">  ⚠ Additional cost for replicated storage</text>
+
+  <line x1="400" y1="355" x2="400" y2="385" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- RPO/RTO Explanation -->
+  <rect x="40" y="385" width="720" height="230" rx="8" fill="#e1d5e7" stroke="#9673a6" stroke-width="2"/>
+  <text x="400" y="409" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">RPO vs RTO — The Two DR Metrics</text>
+  <line x1="60" y1="417" x2="740" y2="417" stroke="#9673a6" stroke-width="1"/>
+
+  <!-- RPO -->
+  <text x="60" y="438" font-family="Arial" font-size="13" font-weight="bold" fill="#9673a6">RPO — Recovery Point Objective (How much data can you lose?)</text>
+  <text x="60" y="458" font-family="Arial" font-size="11">• Max acceptable data loss measured in time → "We can tolerate losing last 5 min of data"</text>
+  <text x="60" y="476" font-family="Arial" font-size="11">• Tool: PITR → captures every change continuously → RPO ≈ seconds</text>
+  <text x="60" y="494" font-family="Arial" font-size="11">• Example: Disaster at 10:30AM, last backup at 10:00AM → 30min data lost. RPO=1hr ✔, RPO=5min ✘</text>
+  <line x1="60" y1="502" x2="740" y2="502" stroke="#ddd" stroke-width="1"/>
+
+  <!-- RTO -->
+  <text x="60" y="522" font-family="Arial" font-size="13" font-weight="bold" fill="#9673a6">RTO — Recovery Time Objective (How long can app be down?)</text>
+  <text x="60" y="542" font-family="Arial" font-size="11">• Max acceptable downtime → "App must be back up within 30 minutes"</text>
+  <text x="60" y="560" font-family="Arial" font-size="11">• Tool: Global Tables + Route 53 → automatic traffic rerouting → RTO ≈ 0 (instant)</text>
+  <text x="60" y="578" font-family="Arial" font-size="11">• Example: App down 10:30AM, back at 2:30PM → 4hr RTO. If RTO=4hr ✔, if RTO=30min ✘</text>
+  <line x1="60" y1="586" x2="740" y2="586" stroke="#ddd" stroke-width="1"/>
+
+  <!-- Combined -->
+  <text x="60" y="606" font-family="Arial" font-size="11">• Configure BOTH: RPO=5min → enable PITR | RTO=0 → enable Global Tables + Route 53</text>
+  <line x1="400" y1="615" x2="400" y2="645" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- DR Comparison Table -->
+  <rect x="40" y="645" width="720" height="170" rx="8" fill="none" stroke="#999" stroke-dasharray="5,5"/>
+  <text x="60" y="667" font-family="Arial" font-size="12" font-weight="bold" fill="#666">DR Strategy Comparison:</text>
+  <rect x="60" y="675" width="680" height="25" fill="#232F3E"/>
+  <text x="200" y="692" text-anchor="middle" font-family="Arial" font-size="11" fill="#fff" font-weight="bold">Strategy</text>
+  <text x="400" y="692" text-anchor="middle" font-family="Arial" font-size="11" fill="#fff" font-weight="bold">Protects Against</text>
+  <text x="600" y="692" text-anchor="middle" font-family="Arial" font-size="11" fill="#fff" font-weight="bold">RPO / RTO</text>
+  <rect x="60" y="700" width="680" height="22" fill="#e8f5e9" stroke="#ccc" stroke-width="1"/>
+  <text x="200" y="715" text-anchor="middle" font-family="Arial" font-size="11">PITR</text>
+  <text x="400" y="715" text-anchor="middle" font-family="Arial" font-size="11">Human error / app bugs</text>
+  <text x="600" y="715" text-anchor="middle" font-family="Arial" font-size="11">RPO ~seconds | RTO ~minutes</text>
+  <rect x="60" y="722" width="680" height="22" fill="#fff3e0" stroke="#ccc" stroke-width="1"/>
+  <text x="200" y="737" text-anchor="middle" font-family="Arial" font-size="11">Global Tables</text>
+  <text x="400" y="737" text-anchor="middle" font-family="Arial" font-size="11">Region outage</text>
+  <text x="600" y="737" text-anchor="middle" font-family="Arial" font-size="11">RPO ~seconds | RTO ~0</text>
+  <rect x="60" y="744" width="680" height="22" fill="#e8f5e9" stroke="#ccc" stroke-width="1"/>
+  <text x="200" y="759" text-anchor="middle" font-family="Arial" font-size="11">On-Demand Backup</text>
+  <text x="400" y="759" text-anchor="middle" font-family="Arial" font-size="11">Long-term archive / compliance</text>
+  <text x="600" y="759" text-anchor="middle" font-family="Arial" font-size="11">RPO = backup time | RTO ~minutes</text>
+  <rect x="60" y="766" width="680" height="22" fill="#fff3e0" stroke="#ccc" stroke-width="1"/>
+  <text x="200" y="781" text-anchor="middle" font-family="Arial" font-size="11">PITR + Global Tables</text>
+  <text x="400" y="781" text-anchor="middle" font-family="Arial" font-size="11">Human error + Region outage</text>
+  <text x="600" y="781" text-anchor="middle" font-family="Arial" font-size="11">Best RPO + RTO — Full DR</text>
+
+  <!-- Note -->
+  <rect x="40" y="840" width="720" height="40" fill="#f9f9f9" stroke="#ddd"/>
+  <text x="60" y="858" font-family="Arial" font-size="11" font-weight="bold">⚠ Critical Rule: Define and configure RPO + RTO BEFORE a disaster — not during one!</text>
+  <text x="60" y="873" font-family="Arial" font-size="11">Note: PITR does NOT protect against accidental table deletion (backup is also deleted with the table)</text>
+</svg>

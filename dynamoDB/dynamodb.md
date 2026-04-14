@@ -171,6 +171,8 @@ One DynamoDB table that exists in multiple AWS regions simultaneously, kept in s
 ### 3.4 FinOps (Cost Optimization)
 
 Three capacity modes: On-Demand (pay per request), Provisioned (fixed RCU/WCU limits), and Reserved (commit 1–3 years for up to 70% discount).
+- You can only switch between On-Demand and Provisioned capacity once every 24 hours
+- This has caused real-world production incidents
 
 > For full cost optimization strategies including Scan vs Query, attribute naming, and GSI cost impact, see [Section 22: Cost Optimization](#22-cost-optimization).
 
@@ -929,6 +931,8 @@ To get the next set of data, you use two special labels:
 - GSI limit (20) can be increased via AWS support (default limit).
   - AWS has set 20 as the default maximum, BUT you can request AWS to increase it
 - LSI limit (5) is hard limit -> cannot be increased.
+- A GSI has its own independent throughput. The base table can be healthy while a GSI is throttled, causing queries to fail
+- This is a subtle but critical production gotcha
 - Too many GSIs = higher cost + write amplification
 - To increase GSI  `Go to AWS Service Quotas >
 Request increase to 25 (or more)`
@@ -1435,7 +1439,7 @@ AND SK BETWEEN "10:00" AND "10:10" ```.
     ```
   
 
-[Read More](./topic-28-security.svg)
+[Read More](./topic-27-security.svg)
 
 ---
 
@@ -1469,6 +1473,8 @@ Essential for critical operations like payments.
     Retry → Fails (requestId already exists) 
     No duplicate payment!
     ```
+
+[Read More](./topic-28-idempotency.svg)
 
 ---
 
@@ -1523,6 +1529,8 @@ Mastering these core patterns is the key to Single-Table Design:
       SK = USER#1
       ```
     - Now you can query by order ID!
+
+[Read More](./topic-29-data-modeling-patterns.svg)
 
 ---
 
@@ -1585,6 +1593,8 @@ When data is updated in multiple regions simultaneously, DynamoDB must decide wh
     DynamoDB → picks latest timestamp → winner
     ```
 
+[Read More](./topic-30-global-tables.svg)
+
 ---
 
 ## 31. Latency Optimization 
@@ -1624,6 +1634,8 @@ When data is updated in multiple regions simultaneously, DynamoDB must decide wh
     - This is NOT free 
     - You pay for the time these instances stay warm
 
+[Read More](./topic-31-latency-optimization.svg)
+
 ---
 
 ## 32. Schema Evolution
@@ -1649,6 +1661,7 @@ Since DynamoDB is schemaless, you can add attributes at any time.
   - In your application code, check the version and handle old items gracefully
   - Never rely on DynamoDB to enforce structure — that responsibility belongs to your app
 
+[Read More](./topic-32-schema-evolution.svg)
 
 ---
 
@@ -1688,6 +1701,8 @@ Think of DR like this: "What happens if something goes terribly wrong?"
                  (achieves your RTO goal)
     ```
   >Note: Both must be defined BEFORE disaster, not during it.
+
+[Read More](./topic-33-disaster-recovery.svg)
 
 ---
 
@@ -1746,6 +1761,9 @@ For large-scale migrations (SQL to DynamoDB):
 | **Parallelism** | Makes migration fast enough to be useful. | Having many movers working at the same time to finish quickly. |
 | **DLQ (Dead Letter Queue)** | Ensures no data is lost if something goes wrong. | A rejection bin where failed items wait to be checked again. |
 | **Monitoring** | Shows you the progress and any failures. | A tracking number for every box so you know where it is. |
+
+[Read More](./topic-34-data-migration.svg)
+
 ---
 
 ## 35. Write & Read Amplification
@@ -1758,6 +1776,7 @@ For large-scale migrations (SQL to DynamoDB):
   - See [Cost Optimization](#22-cost-optimization) for how item size affects RCU consumption and cost.
   - Each additional GSI increases write amplification linearly
 
+[Read More](./topic-35-amplification.svg)
 
 ---
 
@@ -1776,5 +1795,7 @@ DynamoDB works differently. It runs across thousands of servers distributed acro
 
 - **Embrace Eventual Consistency:** It provides the highest availability and lowest cost. (See [Section 12: Consistency Models](#12-consistency-models))
 - **Focus on Throughput:** Success in DynamoDB is measured by how efficiently you use your RCU and WCU. (See [Section 22: Cost Optimization](#22-cost-optimization))
+
+[Read More](./topic-36-distributed-thinking.svg)
 
 ---

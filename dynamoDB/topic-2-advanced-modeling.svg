@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 850">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 900">
   <defs>
     <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
       <path d="M0,0 L0,6 L9,3 z" fill="#000" />
@@ -6,51 +6,84 @@
   </defs>
   <rect width="100%" height="100%" fill="#f4f4f4"/>
   <rect width="100%" height="50" fill="#232F3E"/>
-  <text x="20" y="32" font-family="Arial" font-size="20" fill="#ffffff" font-weight="bold">2. Advanced Data Modeling (Single-Table Design)</text>
+  <text x="20" y="32" font-family="Arial" font-size="20" fill="#ffffff" font-weight="bold">2. Advanced Data Modeling – The No-Join Philosophy</text>
 
-  <!-- Application Request -->
-  <rect x="300" y="80" width="200" height="60" rx="10" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
-  <text x="400" y="105" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">Complex Access Pattern</text>
-  <text x="400" y="122" text-anchor="middle" font-family="Arial" font-size="11">(Query User + Recent Orders)</text>
+  <!-- Single Table Design -->
+  <rect x="40" y="65" width="720" height="150" rx="8" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="400" y="89" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Single-Table Design (Multiple Entities in One Table)</text>
+  <line x1="60" y1="97" x2="740" y2="97" stroke="#82b366" stroke-width="1"/>
+  <rect x="60" y="107" width="680" height="22" fill="#232F3E"/>
+  <text x="175" y="122" text-anchor="middle" font-family="Arial" font-size="10" fill="#fff">PK</text>
+  <text x="400" y="122" text-anchor="middle" font-family="Arial" font-size="10" fill="#fff">SK</text>
+  <text x="620" y="122" text-anchor="middle" font-family="Arial" font-size="10" fill="#fff">Entity</text>
+  <rect x="60" y="129" width="680" height="20" fill="#e8f5e9"/>
+  <text x="175" y="143" text-anchor="middle" font-family="Arial" font-size="11">USER#123</text>
+  <text x="400" y="143" text-anchor="middle" font-family="Arial" font-size="11">PROFILE</text>
+  <text x="620" y="143" text-anchor="middle" font-family="Arial" font-size="11">User profile info</text>
+  <rect x="60" y="149" width="680" height="20" fill="#fff"/>
+  <text x="175" y="163" text-anchor="middle" font-family="Arial" font-size="11">USER#123</text>
+  <text x="400" y="163" text-anchor="middle" font-family="Arial" font-size="11">ORDER#2024-01</text>
+  <text x="620" y="163" text-anchor="middle" font-family="Arial" font-size="11">Order entity (denormalized)</text>
+  <rect x="60" y="169" width="680" height="20" fill="#e8f5e9"/>
+  <text x="175" y="183" text-anchor="middle" font-family="Arial" font-size="11">PRODUCT#456</text>
+  <text x="400" y="183" text-anchor="middle" font-family="Arial" font-size="11">METADATA</text>
+  <text x="620" y="183" text-anchor="middle" font-family="Arial" font-size="11">Product entity — same table!</text>
+  <text x="60" y="205" font-family="Arial" font-size="11">Query: PK=USER#123 → returns profile + all orders in ONE round trip. No JOIN needed.</text>
 
-  <!-- Request Router / GAC -->
-  <path d="M400,160 L580,230 L400,300 L220,170 Z" fill="#fff2cc" stroke="#d6b656" stroke-width="2" transform="translate(0,20)"/>
-  <text x="400" y="230" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Partition Key Router</text>
-  <text x="400" y="245" text-anchor="middle" font-family="Arial" font-size="11">GSI Overloading Logic</text>
-  <line x1="400" y1="140" x2="400" y2="180" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- Adjacency List / GSI Flip -->
+  <rect x="40" y="228" width="720" height="155" rx="8" fill="#fff2cc" stroke="#d6b656" stroke-width="2"/>
+  <text x="400" y="252" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Adjacency List (GSI Flip) — Many-to-Many N:M</text>
+  <line x1="60" y1="260" x2="740" y2="260" stroke="#d6b656" stroke-width="1"/>
+  <rect x="60" y="268" width="300" height="100" rx="6" fill="#fff" stroke="#d6b656" stroke-width="1"/>
+  <text x="210" y="288" text-anchor="middle" font-family="Arial" font-size="11" font-weight="bold">Main Table</text>
+  <text x="80" y="308" font-family="Arial" font-size="11">PK = USER#1  →  SK = FOLLOWS#USER#2</text>
+  <text x="80" y="326" font-family="Arial" font-size="11">PK = USER#1  →  SK = FOLLOWS#USER#3</text>
+  <text x="80" y="350" font-family="Arial" font-size="10" fill="#666">Query PK=USER#1 → who does USER#1 follow?</text>
+  <rect x="420" y="268" width="300" height="100" rx="6" fill="#fff" stroke="#82b366" stroke-width="1"/>
+  <text x="570" y="288" text-anchor="middle" font-family="Arial" font-size="11" font-weight="bold">GSI (Inverted PK↔SK)</text>
+  <text x="440" y="308" font-family="Arial" font-size="11">PK = USER#2  →  SK = USER#1</text>
+  <text x="440" y="326" font-family="Arial" font-size="11">PK = USER#3  →  SK = USER#1</text>
+  <text x="440" y="350" font-family="Arial" font-size="10" fill="#666">Query PK=USER#2 → who follows USER#2?</text>
+  <text x="370" y="298" text-anchor="middle" font-family="Arial" font-size="16" fill="#d6b656">⇄</text>
+  <text x="60" y="370" font-family="Arial" font-size="11">GSI Flip: SK becomes GSI PK → enables bi-directional relationship queries</text>
 
-  <!-- Denormalization Engine -->
-  <rect x="300" y="350" width="200" height="70" fill="#f8cecc" stroke="#b85450" stroke-width="2"/>
-  <text x="400" y="380" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Denormalization Engine</text>
-  <text x="400" y="395" text-anchor="middle" font-family="Arial" font-size="11">Flatten Entities into Item Collections</text>
-  <line x1="400" y1="320" x2="400" y2="350" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- GSI Overloading -->
+  <rect x="40" y="398" width="345" height="130" rx="8" fill="#f8cecc" stroke="#b85450" stroke-width="2"/>
+  <text x="213" y="422" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">GSI Overloading</text>
+  <line x1="60" y1="430" x2="365" y2="430" stroke="#b85450" stroke-width="1"/>
+  <text x="60" y="450" font-family="Arial" font-size="11">Use generic names: GSI1_PK, GSI1_SK</text>
+  <text x="60" y="468" font-family="Arial" font-size="11">One GSI serves multiple entity types</text>
+  <text x="60" y="486" font-family="Arial" font-size="11">User: GSI1_PK = email</text>
+  <text x="60" y="504" font-family="Arial" font-size="11">Order: GSI1_PK = status#date</text>
+  <text x="60" y="520" font-family="Arial" font-size="11">Saves GSI limit (20/table)</text>
 
-  <!-- Logical Table Group -->
-  <rect x="40" y="460" width="720" height="320" fill="none" stroke="#999" stroke-dasharray="5,5"/>
-  <text x="50" y="480" font-family="Arial" font-size="12" font-weight="bold" fill="#666">Single Table Item Collection</text>
+  <!-- Sparse Indexes -->
+  <rect x="415" y="398" width="345" height="130" rx="8" fill="#e1d5e7" stroke="#9673a6" stroke-width="2"/>
+  <text x="588" y="422" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Sparse Indexes</text>
+  <line x1="435" y1="430" x2="740" y2="430" stroke="#9673a6" stroke-width="1"/>
+  <text x="435" y="450" font-family="Arial" font-size="11">Only items WITH the GSI attr appear in GSI</text>
+  <text x="435" y="468" font-family="Arial" font-size="11">Millions of COMPLETED orders → not in GSI</text>
+  <text x="435" y="486" font-family="Arial" font-size="11">Only IN_PROGRESS orders → in GSI</text>
+  <text x="435" y="504" font-family="Arial" font-size="11">"Needle in a haystack" → tiny GSI scan</text>
+  <text x="435" y="520" font-family="Arial" font-size="11">Set attribute only when status = IN_PROGRESS</text>
 
-  <!-- Single Table Items -->
-  <rect x="70" y="510" width="210" height="80" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
-  <text x="175" y="545" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">PK: USER#123</text>
-  <text x="175" y="565" text-anchor="middle" font-family="Arial" font-size="11">SK: METADATA (Profile Info)</text>
-
-  <rect x="295" y="510" width="210" height="80" fill="#f5f5f5" stroke="#666" stroke-width="2"/>
-  <text x="400" y="545" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">PK: USER#123</text>
-  <text x="400" y="565" text-anchor="middle" font-family="Arial" font-size="11">SK: ORDER#2024-01</text>
-
-  <rect x="520" y="510" width="210" height="80" fill="#f5f5f5" stroke="#666" stroke-width="2"/>
-  <text x="625" y="545" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">PK: USER#123</text>
-  <text x="625" y="565" text-anchor="middle" font-family="Arial" font-size="11">SK: ORDER#2024-02</text>
-
-  <!-- GSI Flip -->
-  <polygon points="250,650 550,650 520,750 220,750" fill="#e1d5e7" stroke="#9673a6" stroke-width="2"/>
-  <text x="385" y="690" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Adjacency List (GSI Flip)</text>
-  <text x="385" y="710" text-anchor="middle" font-family="Arial" font-size="11">Query N:M Relationships</text>
-  <line x1="400" y1="590" x2="400" y2="650" stroke="#666" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
-
-  <!-- Legend -->
-  <rect x="580" y="350" width="180" height="70" fill="#f9f9f9" stroke="#ddd" />
-  <text x="590" y="370" font-family="Arial" font-size="11" font-weight="bold">Modeling Goals:</text>
-  <text x="590" y="385" font-family="Arial" font-size="11">- Single Round Trip</text>
-  <text x="590" y="400" font-family="Arial" font-size="11">- No JOINs at runtime</text>
+  <!-- Summary -->
+  <rect x="40" y="542" width="720" height="330" fill="#232F3E" rx="8"/>
+  <text x="60" y="565" font-family="Arial" font-size="12" font-weight="bold" fill="#FF9900">Key Takeaways:</text>
+  <text x="60" y="585" font-family="Arial" font-size="11" fill="#fff">• Single-Table Design: store Users + Orders + Products in ONE table → one Query, no JOINs</text>
+  <text x="60" y="603" font-family="Arial" font-size="11" fill="#fff">• Model queries, NOT entities — first ask "what do my access patterns need?" then design PK/SK</text>
+  <text x="60" y="621" font-family="Arial" font-size="11" fill="#fff">• Adjacency List: store row in both directions (user→follows, followee→followed-by) for N:M</text>
+  <text x="60" y="639" font-family="Arial" font-size="11" fill="#fff">• GSI Flip: SK from main table becomes PK of GSI → query from opposite direction instantly</text>
+  <text x="60" y="657" font-family="Arial" font-size="11" fill="#fff">• GSI Overloading: one GSI with generic names (GSI1_PK) serves many entity types</text>
+  <text x="60" y="675" font-family="Arial" font-size="11" fill="#fff">• Sparse Index: only items with that attribute appear in the GSI → naturally filtered, cheap to query</text>
+  <text x="60" y="693" font-family="Arial" font-size="11" fill="#fff">• Denormalization is intentional — duplicate product name inside order item eliminates JOIN at read time</text>
+  <text x="60" y="711" font-family="Arial" font-size="11" fill="#fff">• Cost of Single-Table: write amplification from GSIs — each write updates all GSIs that have PK/SK</text>
+  <text x="60" y="729" font-family="Arial" font-size="11" fill="#fff">• Rule of thumb: one GSI per major access pattern that can't be served by table PK/SK</text>
+  <text x="60" y="747" font-family="Arial" font-size="11" fill="#fff">• Default GSI limit = 20/table (can request increase via AWS Service Quotas)</text>
+  <text x="60" y="765" font-family="Arial" font-size="11" fill="#fff">• Item collections: all items sharing same PK are stored together — exploit this for locality</text>
+  <text x="60" y="783" font-family="Arial" font-size="11" fill="#fff">• PK must be high-cardinality — low-cardinality PK (e.g., status=ACTIVE) → hot partition</text>
+  <text x="60" y="801" font-family="Arial" font-size="11" fill="#fff">• Tip: design SK with composite values: ORDER#2024-01-15 allows range queries by date prefix</text>
+  <text x="60" y="819" font-family="Arial" font-size="11" fill="#fff">• Multi-entity table: use type-prefix on SK (PROFILE, ORDER#, PRODUCT#) to distinguish entity types</text>
+  <text x="60" y="837" font-family="Arial" font-size="11" fill="#fff">• Watch out: too many entity types in one table = complex code — balance convenience vs complexity</text>
+  <text x="60" y="855" font-family="Arial" font-size="11" fill="#fff">• Golden rule of DynamoDB modeling: Know your access patterns before writing a single line of code</text>
 </svg>

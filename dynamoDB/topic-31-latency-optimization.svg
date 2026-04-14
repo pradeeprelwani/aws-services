@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 880">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#000" />
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="#f4f4f4"/>
+  <rect width="100%" height="50" fill="#232F3E"/>
+  <text x="20" y="32" font-family="Arial" font-size="20" fill="#ffffff" font-weight="bold">31. Latency Optimization</text>
+
+  <!-- Latency Layers -->
+  <rect x="40" y="60" width="720" height="65" rx="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="400" y="84" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">Latency = Time from request sent → response received</text>
+  <text x="60" y="108" font-family="Arial" font-size="11">Goal: Reduce every component of this journey — network, compute, data access, cold starts</text>
+  <line x1="400" y1="125" x2="400" y2="155" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Tip 1: DAX -->
+  <rect x="40" y="155" width="720" height="100" rx="8" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="400" y="179" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">✅ Tip 1: Use DAX (In-Memory Cache — microsecond latency)</text>
+  <text x="60" y="200" font-family="Arial" font-size="11">• DynamoDB default: ~1–10ms | DAX cache hit: &lt;microseconds (up to 10x faster)</text>
+  <text x="60" y="218" font-family="Arial" font-size="11">• App → DAX cluster endpoint (instead of DynamoDB endpoint directly)</text>
+  <text x="60" y="236" font-family="Arial" font-size="11">• Best for: Read-heavy workloads, hot key mitigation, gaming leaderboards, real-time feeds</text>
+  <line x1="400" y1="255" x2="400" y2="285" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Tip 2: Query vs Scan -->
+  <rect x="40" y="285" width="720" height="100" rx="8" fill="#fff2cc" stroke="#d6b656" stroke-width="2"/>
+  <text x="400" y="309" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">✅ Tip 2: Always Query — Never Scan at Scale</text>
+  <text x="60" y="330" font-family="Arial" font-size="11">• Scan: Reads EVERY item in table → O(n) cost and time — gets worse as table grows</text>
+  <text x="60" y="348" font-family="Arial" font-size="11">• Query: Uses index → reads ONLY your partition → O(log n) in B-tree → constant fast</text>
+  <text x="60" y="366" font-family="Arial" font-size="11">• Fix: Design GSI for every access pattern → Query on GSI instead of Scan on full table</text>
+  <line x1="400" y1="385" x2="400" y2="415" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Tip 3: ProjectionExpression -->
+  <rect x="40" y="415" width="720" height="90" rx="8" fill="#f8cecc" stroke="#b85450" stroke-width="2"/>
+  <text x="400" y="439" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">✅ Tip 3: Use ProjectionExpression (Fetch Only What You Need)</text>
+  <text x="60" y="460" font-family="Arial" font-size="11">• Without: Fetching 400KB item when you need only 3 fields → wastes bandwidth + RCU</text>
+  <text x="60" y="478" font-family="Arial" font-size="11">• With: ProjectionExpression: "name, email, status" → smaller response → lower latency</text>
+  <text x="60" y="496" font-family="Arial" font-size="11">• Savings: 400KB item → 2KB payload = 200x less data transferred</text>
+  <line x1="400" y1="505" x2="400" y2="535" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Tip 4: Connection Reuse -->
+  <rect x="40" y="535" width="720" height="90" rx="8" fill="#e1d5e7" stroke="#9673a6" stroke-width="2"/>
+  <text x="400" y="559" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">✅ Tip 4: SDK Connection Reuse + Singleton Client</text>
+  <text x="60" y="580" font-family="Arial" font-size="11">• Each new TLS handshake adds 50–200ms — avoid in hot paths</text>
+  <text x="60" y="598" font-family="Arial" font-size="11">• Use https.Agent({ keepAlive: true }) → persistent HTTP connection pool</text>
+  <text x="60" y="616" font-family="Arial" font-size="11">• Singleton DynamoDBClient → reused across Lambda invocations (no re-init overhead)</text>
+  <line x1="400" y1="625" x2="400" y2="655" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Tip 5: Lambda Provisioned Concurrency -->
+  <rect x="40" y="655" width="720" height="100" rx="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="400" y="679" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">✅ Tip 5: Lambda Provisioned Concurrency (Eliminate Cold Starts)</text>
+  <text x="60" y="700" font-family="Arial" font-size="11">• Cold Start: Request → no warm Lambda → init container → load code → run → +500ms–2s delay</text>
+  <text x="60" y="718" font-family="Arial" font-size="11">• Provisioned Concurrency: Keep N Lambda instances pre-initialized → instant execution, 0 cold start</text>
+  <text x="60" y="736" font-family="Arial" font-size="11">• Note: Costs money (pay for idle warm instances) — use for latency-sensitive production APIs only</text>
+
+  <!-- Summary -->
+  <rect x="40" y="780" width="720" height="70" fill="#f9f9f9" stroke="#ddd"/>
+  <text x="60" y="802" font-family="Arial" font-size="12" font-weight="bold">Latency Optimization Stack:</text>
+  <text x="60" y="822" font-family="Arial" font-size="11">DAX (μs cache) → Query/GSI (avoid scan) → ProjectionExpression (less data) → Connection reuse → Provisioned concurrency</text>
+  <text x="60" y="840" font-family="Arial" font-size="11">Apply all layers together for sub-millisecond p99 latency at scale</text>
+</svg>

@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 850">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 880">
   <defs>
     <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
       <path d="M0,0 L0,6 L9,3 z" fill="#000" />
@@ -6,50 +6,78 @@
   </defs>
   <rect width="100%" height="100%" fill="#f4f4f4"/>
   <rect width="100%" height="50" fill="#232F3E"/>
-  <text x="20" y="32" font-family="Arial" font-size="20" fill="#ffffff" font-weight="bold">4. Security: Advanced Resource-Based Policies</text>
+  <text x="20" y="32" font-family="Arial" font-size="20" fill="#ffffff" font-weight="bold">4. Advanced Security &amp; Governance</text>
 
-  <!-- External Account B Request -->
-  <rect x="300" y="80" width="200" height="60" rx="10" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
-  <text x="400" y="105" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">Account B Principal</text>
-  <text x="400" y="122" text-anchor="middle" font-family="Arial" font-size="11">(Cross-Account Consumer)</text>
+  <!-- Resource-Based Policy -->
+  <rect x="40" y="65" width="720" height="215" rx="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="400" y="89" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">4.1 Resource-Based Policies (Cross-Account Access)</text>
+  <line x1="60" y1="97" x2="740" y2="97" stroke="#6c8ebf" stroke-width="1"/>
+  <!-- Account A -->
+  <rect x="60" y="107" width="280" height="155" rx="6" fill="#fff" stroke="#6c8ebf" stroke-width="1"/>
+  <text x="200" y="128" text-anchor="middle" font-family="Arial" font-size="11" font-weight="bold">Account A (111111111111)</text>
+  <text x="200" y="148" text-anchor="middle" font-family="Arial" font-size="11">DynamoDB Table: UsersTable</text>
+  <rect x="80" y="158" width="240" height="90" rx="4" fill="#f4f4f4"/>
+  <text x="200" y="175" text-anchor="middle" font-family="Arial" font-size="10" font-weight="bold">Resource-Based Policy ON TABLE:</text>
+  <text x="90" y="193" font-family="Arial" font-size="10">Principal: acct B (222222222222)</text>
+  <text x="90" y="209" font-family="Arial" font-size="10">Action: GetItem, Scan, Query</text>
+  <text x="90" y="225" font-family="Arial" font-size="10">Resource: arn:aws:dynamodb:.../UsersTable</text>
+  <text x="90" y="241" font-family="Arial" font-size="10" fill="#b85450">⚠ This is NOT in IAM → Policies console!</text>
+  <!-- Arrow -->
+  <line x1="340" y1="185" x2="400" y2="185" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="370" y="178" text-anchor="middle" font-family="Arial" font-size="10" fill="#82b366">Allow</text>
+  <!-- Account B -->
+  <rect x="400" y="107" width="310" height="100" rx="6" fill="#fff" stroke="#82b366" stroke-width="1"/>
+  <text x="555" y="128" text-anchor="middle" font-family="Arial" font-size="11" font-weight="bold">Account B (222222222222)</text>
+  <text x="555" y="148" text-anchor="middle" font-family="Arial" font-size="11">IAM Role → Assumes access</text>
+  <text x="555" y="168" text-anchor="middle" font-family="Arial" font-size="11">Calls GetItem on UsersTable</text>
+  <text x="555" y="188" text-anchor="middle" font-family="Arial" font-size="11">in Account A directly ✔</text>
+  <text x="60" y="272" font-family="Arial" font-size="11">Key: Unlike identity-based policies, resource-based policy lives ON the DynamoDB table (not in IAM)</text>
 
-  <!-- Permission Gatekeeper -->
-  <path d="M400,160 L580,230 L400,300 L220,170 Z" fill="#fff2cc" stroke="#d6b656" stroke-width="2" transform="translate(0,20)"/>
-  <text x="400" y="230" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">IAM Auth Evaluator</text>
-  <text x="400" y="245" text-anchor="middle" font-family="Arial" font-size="11">Resource Policy Check</text>
-  <line x1="400" y1="140" x2="400" y2="180" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- Client-Side Encryption -->
+  <rect x="40" y="295" width="720" height="180" rx="8" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="400" y="319" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">4.2 Client-Side Encryption (AWS Database Encryption SDK)</text>
+  <line x1="60" y1="327" x2="740" y2="327" stroke="#82b366" stroke-width="1"/>
+  <!-- Flow boxes -->
+  <rect x="60" y="337" width="130" height="50" rx="6" fill="#fff" stroke="#82b366" stroke-width="1"/>
+  <text x="125" y="358" text-anchor="middle" font-family="Arial" font-size="11">Your App</text>
+  <text x="125" y="374" text-anchor="middle" font-family="Arial" font-size="10">plaintext data</text>
+  <line x1="190" y1="362" x2="225" y2="362" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <rect x="225" y="337" width="130" height="50" rx="6" fill="#fff2cc" stroke="#d6b656" stroke-width="1"/>
+  <text x="290" y="358" text-anchor="middle" font-family="Arial" font-size="11">AWS KMS</text>
+  <text x="290" y="374" text-anchor="middle" font-family="Arial" font-size="10">Get data key / CMK</text>
+  <line x1="355" y1="362" x2="390" y2="362" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <rect x="390" y="337" width="145" height="50" rx="6" fill="#f8cecc" stroke="#b85450" stroke-width="1"/>
+  <text x="463" y="358" text-anchor="middle" font-family="Arial" font-size="11">Encrypt SDK</text>
+  <text x="463" y="374" text-anchor="middle" font-family="Arial" font-size="10">locally in app memory</text>
+  <line x1="535" y1="362" x2="570" y2="362" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <rect x="570" y="337" width="150" height="50" rx="6" fill="#e1d5e7" stroke="#9673a6" stroke-width="1"/>
+  <text x="645" y="358" text-anchor="middle" font-family="Arial" font-size="11">DynamoDB</text>
+  <text x="645" y="374" text-anchor="middle" font-family="Arial" font-size="10">stores ciphertext blob</text>
+  <text x="60" y="415" font-family="Arial" font-size="11" font-weight="bold">Why client-side?</text>
+  <text x="60" y="433" font-family="Arial" font-size="11">Data is ciphertext BEFORE it leaves your network → even if DynamoDB is compromised, data unreadable</text>
+  <text x="60" y="451" font-family="Arial" font-size="11">On read: SDK auto-decrypts using KMS key → app receives plaintext (transparent to developer)</text>
+  <text x="60" y="467" font-family="Arial" font-size="11">Contrast with DynamoDB at-rest encryption: AWS encrypts at storage layer — AWS can read plaintext</text>
 
-  <!-- Resource Policy Logic -->
-  <rect x="300" y="350" width="200" height="100" fill="#f8cecc" stroke="#b85450" stroke-width="2"/>
-  <text x="400" y="380" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">JSON Policy Document</text>
-  <text x="400" y="405" text-anchor="middle" font-family="Arial" font-size="11" fill="#b85450">Effect: Allow</text>
-  <text x="400" y="420" text-anchor="middle" font-family="Arial" font-size="11" fill="#b85450">Principal: Account-B</text>
-  <line x1="400" y1="320" x2="400" y2="350" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- VPC Endpoint note -->
+  <rect x="40" y="490" width="720" height="70" rx="8" fill="#fff2cc" stroke="#d6b656" stroke-width="2"/>
+  <text x="400" y="514" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Network Protection: VPC Gateway Endpoint</text>
+  <text x="60" y="534" font-family="Arial" font-size="11">Without VPC Endpoint: App → Internet → DynamoDB (traffic leaves AWS network)</text>
+  <text x="60" y="552" font-family="Arial" font-size="11">With VPC Endpoint:    App → VPC → DynamoDB (private AWS backbone — no internet, no NAT Gateway)</text>
 
-  <!-- Target Table Container -->
-  <rect x="40" y="480" width="720" height="300" fill="none" stroke="#999" stroke-dasharray="5,5"/>
-  <text x="50" y="500" font-family="Arial" font-size="12" font-weight="bold" fill="#666">Account A (Resource Owner)</text>
-
-  <!-- Protected DynamoDB Table -->
-  <rect x="250" y="550" width="300" height="150" rx="8" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
-  <text x="400" y="585" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">DynamoDB: UsersTable</text>
-  <rect x="270" y="610" width="260" height="70" fill="#fff" opacity="0.6" rx="4"/>
-  <text x="400" y="635" text-anchor="middle" font-family="Arial" font-size="11" font-weight="bold" fill="#666">Cross-Account Identity</text>
-  <text x="400" y="655" text-anchor="middle" font-family="Arial" font-size="10" fill="#d9534f">arn:aws:iam::222222222222:root</text>
-
-  <!-- Access Status -->
-  <circle cx="150" cy="625" r="40" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
-  <text x="150" y="630" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold">GRANT</text>
-  
-  <circle cx="650" cy="625" r="40" fill="#f8cecc" stroke="#b85450" stroke-width="2" opacity="0.5"/>
-  <text x="650" y="630" text-anchor="middle" font-family="Arial" font-size="10">DENY-BY-DEFAULT</text>
-
-  <!-- Flow Line -->
-  <line x1="400" y1="450" x2="400" y2="550" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
-
-  <!-- Legend -->
-  <rect x="580" y="350" width="180" height="70" fill="#f9f9f9" stroke="#ddd" />
-  <text x="590" y="370" font-family="Arial" font-size="11" font-weight="bold">Key Benefits:</text>
-  <text x="590" y="385" font-family="Arial" font-size="11">- No IAM Role Assume</text>
-  <text x="590" y="400" font-family="Arial" font-size="11">- Lower Latency Access</text>
+  <!-- Summary -->
+  <rect x="40" y="575" width="720" height="280" fill="#232F3E" rx="8"/>
+  <text x="60" y="598" font-family="Arial" font-size="12" font-weight="bold" fill="#FF9900">Key Takeaways:</text>
+  <text x="60" y="618" font-family="Arial" font-size="11" fill="#fff">• Resource-based policy = attached to the DynamoDB TABLE (not in IAM → Policies)</text>
+  <text x="60" y="636" font-family="Arial" font-size="11" fill="#fff">• Cross-account: Two policies needed — resource policy on table (Account A) + identity policy on role (Account B)</text>
+  <text x="60" y="654" font-family="Arial" font-size="11" fill="#fff">• Client-side encryption: data encrypted IN your app before reaching AWS network — highest protection tier</text>
+  <text x="60" y="672" font-family="Arial" font-size="11" fill="#fff">• DynamoDB at-rest encryption (AWS-managed) is ON by default — you don't need to configure it</text>
+  <text x="60" y="690" font-family="Arial" font-size="11" fill="#fff">• CMK (Customer-Managed Key) gives you key control: rotate, disable, audit in CloudTrail</text>
+  <text x="60" y="708" font-family="Arial" font-size="11" fill="#fff">• Use client-side encryption for PII fields only — not all data (performance overhead from KMS calls)</text>
+  <text x="60" y="726" font-family="Arial" font-size="11" fill="#fff">• VPC Gateway Endpoint for DynamoDB: free, no bandwidth charge, keeps traffic inside AWS network</text>
+  <text x="60" y="744" font-family="Arial" font-size="11" fill="#fff">• IAM Least Privilege: scope to specific table ARNs and actions — never use wildcard (*) in prod</text>
+  <text x="60" y="762" font-family="Arial" font-size="11" fill="#fff">• For row-level security: combine resource policy + IAM condition: dynamodb:LeadingKeys = userId</text>
+  <text x="60" y="780" font-family="Arial" font-size="11" fill="#fff">• Audit trail: CloudTrail logs every DynamoDB API call (who, when, what) — enable in all accounts</text>
+  <text x="60" y="798" font-family="Arial" font-size="11" fill="#fff">• SDK: @aws-crypto/client-node handles KMS interaction + encryption automatically</text>
+  <text x="60" y="816" font-family="Arial" font-size="11" fill="#fff">• Never store unencrypted PII in DynamoDB without client-side encryption — compliance risk</text>
+  <text x="60" y="835" font-family="Arial" font-size="11" fill="#fff">• In-transit: TLS/HTTPS is enforced by default — DynamoDB rejects plain HTTP connections</text>
 </svg>

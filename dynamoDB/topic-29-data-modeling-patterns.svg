@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 920">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#000" />
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="#f4f4f4"/>
+  <rect width="100%" height="50" fill="#232F3E"/>
+  <text x="20" y="32" font-family="Arial" font-size="20" fill="#ffffff" font-weight="bold">29. Data Modeling Patterns</text>
+
+  <!-- Title: One-to-Many -->
+  <rect x="40" y="60" width="720" height="185" rx="8" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="400" y="84" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">Pattern 1: One-to-Many (Same PK, Different SK)</text>
+  <line x1="60" y1="92" x2="740" y2="92" stroke="#82b366" stroke-width="1"/>
+  <text x="60" y="112" font-family="Arial" font-size="11" font-weight="bold">Example: 1 User → many Orders</text>
+  <!-- Table rows -->
+  <rect x="60" y="120" width="680" height="25" fill="#fff" stroke="#ccc" stroke-width="1"/>
+  <text x="220" y="137" text-anchor="middle" font-family="Arial" font-size="11" font-weight="bold">PK</text>
+  <text x="500" y="137" text-anchor="middle" font-family="Arial" font-size="11" font-weight="bold">SK</text>
+  <text x="680" y="137" text-anchor="middle" font-family="Arial" font-size="11" font-weight="bold">Data</text>
+  <rect x="60" y="145" width="680" height="20" fill="#e8f5e9" stroke="#ccc" stroke-width="1"/>
+  <text x="220" y="159" text-anchor="middle" font-family="Arial" font-size="11">USER#1</text>
+  <text x="500" y="159" text-anchor="middle" font-family="Arial" font-size="11">PROFILE</text>
+  <text x="680" y="159" text-anchor="middle" font-family="Arial" font-size="11">User info</text>
+  <rect x="60" y="165" width="680" height="20" fill="#fff" stroke="#ccc" stroke-width="1"/>
+  <text x="220" y="179" text-anchor="middle" font-family="Arial" font-size="11">USER#1</text>
+  <text x="500" y="179" text-anchor="middle" font-family="Arial" font-size="11">ORDER#101</text>
+  <text x="680" y="179" text-anchor="middle" font-family="Arial" font-size="11">Order 1 data</text>
+  <rect x="60" y="185" width="680" height="20" fill="#e8f5e9" stroke="#ccc" stroke-width="1"/>
+  <text x="220" y="199" text-anchor="middle" font-family="Arial" font-size="11">USER#1</text>
+  <text x="500" y="199" text-anchor="middle" font-family="Arial" font-size="11">ORDER#102</text>
+  <text x="680" y="199" text-anchor="middle" font-family="Arial" font-size="11">Order 2 data</text>
+  <text x="60" y="232" font-family="Arial" font-size="11">Query: PK = USER#1 → returns profile + all orders in one round trip (no JOIN needed)</text>
+  <line x1="400" y1="245" x2="400" y2="275" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Pattern 2: Many-to-Many -->
+  <rect x="40" y="275" width="720" height="185" rx="8" fill="#fff2cc" stroke="#d6b656" stroke-width="2"/>
+  <text x="400" y="299" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">Pattern 2: Many-to-Many (Adjacency List)</text>
+  <line x1="60" y1="307" x2="740" y2="307" stroke="#d6b656" stroke-width="1"/>
+  <text x="60" y="327" font-family="Arial" font-size="11" font-weight="bold">Example: Students ↔ Courses (bi-directional)</text>
+  <rect x="60" y="335" width="680" height="25" fill="#fff" stroke="#ccc" stroke-width="1"/>
+  <text x="220" y="352" text-anchor="middle" font-family="Arial" font-size="11" font-weight="bold">PK</text>
+  <text x="500" y="352" text-anchor="middle" font-family="Arial" font-size="11" font-weight="bold">SK</text>
+  <rect x="60" y="360" width="680" height="20" fill="#fffde7" stroke="#ccc" stroke-width="1"/>
+  <text x="220" y="374" text-anchor="middle" font-family="Arial" font-size="11">STUDENT#1</text>
+  <text x="500" y="374" text-anchor="middle" font-family="Arial" font-size="11">COURSE#101  (student → course)</text>
+  <rect x="60" y="380" width="680" height="20" fill="#fff" stroke="#ccc" stroke-width="1"/>
+  <text x="220" y="394" text-anchor="middle" font-family="Arial" font-size="11">STUDENT#1</text>
+  <text x="500" y="394" text-anchor="middle" font-family="Arial" font-size="11">COURSE#102  (student → course)</text>
+  <rect x="60" y="400" width="680" height="20" fill="#fffde7" stroke="#ccc" stroke-width="1"/>
+  <text x="220" y="414" text-anchor="middle" font-family="Arial" font-size="11">COURSE#101</text>
+  <text x="500" y="414" text-anchor="middle" font-family="Arial" font-size="11">STUDENT#1  (course → student)</text>
+  <text x="60" y="448" font-family="Arial" font-size="11">Query from either side: PK=STUDENT#1 (all courses) or PK=COURSE#101 (all students)</text>
+  <line x1="400" y1="460" x2="400" y2="490" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Pattern 3: Inverted Index -->
+  <rect x="40" y="490" width="720" height="155" rx="8" fill="#f8cecc" stroke="#b85450" stroke-width="2"/>
+  <text x="400" y="514" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">Pattern 3: Inverted Index (GSI Flip)</text>
+  <line x1="60" y1="522" x2="740" y2="522" stroke="#b85450" stroke-width="1"/>
+  <text x="60" y="542" font-family="Arial" font-size="11" font-weight="bold">Problem: Need to query Orders by OrderID (opposite direction of PK)</text>
+  <!-- Two boxes side by side -->
+  <rect x="60" y="555" width="280" height="65" rx="6" fill="#fff" stroke="#b85450" stroke-width="1"/>
+  <text x="200" y="574" text-anchor="middle" font-family="Arial" font-size="11" font-weight="bold">Main Table</text>
+  <text x="200" y="593" text-anchor="middle" font-family="Arial" font-size="11">PK = USER#1</text>
+  <text x="200" y="610" text-anchor="middle" font-family="Arial" font-size="11">SK = ORDER#101</text>
+  <text x="390" y="590" text-anchor="middle" font-family="Arial" font-size="16" fill="#b85450">→</text>
+  <rect x="420" y="555" width="300" height="65" rx="6" fill="#fff" stroke="#82b366" stroke-width="1"/>
+  <text x="570" y="574" text-anchor="middle" font-family="Arial" font-size="11" font-weight="bold">GSI (Inverted)</text>
+  <text x="570" y="593" text-anchor="middle" font-family="Arial" font-size="11">GSI_PK = ORDER#101</text>
+  <text x="570" y="610" text-anchor="middle" font-family="Arial" font-size="11">GSI_SK = USER#1</text>
+  <text x="60" y="638" font-family="Arial" font-size="11">Query GSI with PK=ORDER#101 → instantly find which user placed this order</text>
+  <line x1="400" y1="645" x2="400" y2="675" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- GSI Overloading -->
+  <rect x="40" y="675" width="720" height="85" rx="8" fill="#e1d5e7" stroke="#9673a6" stroke-width="2"/>
+  <text x="400" y="699" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">Pattern 4: GSI Overloading (Sparse Index)</text>
+  <text x="60" y="720" font-family="Arial" font-size="11">• Use generic GSI attribute names: GSI1_PK, GSI1_SK (one index serves multiple entity types)</text>
+  <text x="60" y="738" font-family="Arial" font-size="11">• Sparse Index: Only populate GSI attribute on specific items → GSI contains only matching subset</text>
+  <text x="60" y="756" font-family="Arial" font-size="11">• Example: Find all "IN-PROGRESS" orders out of millions → GSI only has in-progress items</text>
+
+  <!-- Summary -->
+  <rect x="40" y="790" width="720" height="90" fill="#f9f9f9" stroke="#ddd"/>
+  <text x="60" y="812" font-family="Arial" font-size="12" font-weight="bold">Pattern Summary:</text>
+  <text x="60" y="832" font-family="Arial" font-size="11">One-to-Many: same PK, vary SK | Many-to-Many: duplicate rows in both directions</text>
+  <text x="60" y="852" font-family="Arial" font-size="11">Inverted Index: GSI flips PK/SK for reverse queries | GSI Overloading: one index, many entity types</text>
+  <text x="60" y="872" font-family="Arial" font-size="11">Core rule: MODEL YOUR QUERIES, not your entities — design schema for access patterns first</text>
+</svg>

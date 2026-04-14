@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 950">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#000" />
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="#f4f4f4"/>
+  <rect width="100%" height="50" fill="#232F3E"/>
+  <text x="20" y="32" font-family="Arial" font-size="20" fill="#ffffff" font-weight="bold">27. Security Overview</text>
+
+  <!-- App Layer -->
+  <rect x="280" y="70" width="240" height="60" rx="10" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="400" y="96" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold">Your Application</text>
+  <text x="400" y="114" text-anchor="middle" font-family="Arial" font-size="11">(EC2 / Lambda / ECS with IAM Role)</text>
+  <line x1="400" y1="130" x2="400" y2="160" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Layer 1: IAM -->
+  <rect x="60" y="160" width="680" height="90" rx="8" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="400" y="184" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Layer 1: IAM — Authorization (Who can access what?)</text>
+  <text x="90" y="205" font-family="Arial" font-size="11">• Principle of Least Privilege: Grant only exact actions needed (e.g., dynamodb:GetItem, not *)</text>
+  <text x="90" y="222" font-family="Arial" font-size="11">• Use IAM Roles (not hardcoded credentials) attached to Lambda / EC2 / ECS</text>
+  <text x="90" y="239" font-family="Arial" font-size="11">• LeadingKeys condition for Row-Level Security (users see only their own data)</text>
+  <line x1="400" y1="250" x2="400" y2="280" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Layer 2: Encryption in Transit -->
+  <rect x="60" y="280" width="680" height="90" rx="8" fill="#fff2cc" stroke="#d6b656" stroke-width="2"/>
+  <text x="400" y="304" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Layer 2: Encryption In Transit (TLS / HTTPS)</text>
+  <text x="90" y="325" font-family="Arial" font-size="11">• ALL traffic between your app and DynamoDB is encrypted with TLS — enabled by default</text>
+  <text x="90" y="343" font-family="Arial" font-size="11">• No manual configuration needed — AWS enforces HTTPS endpoint connections</text>
+  <text x="90" y="361" font-family="Arial" font-size="11">  Flow: App → (TLS encrypted tunnel) → DynamoDB — nobody can sniff packets</text>
+  <line x1="400" y1="370" x2="400" y2="400" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Layer 3: Encryption at Rest -->
+  <rect x="60" y="400" width="680" height="90" rx="8" fill="#f8cecc" stroke="#b85450" stroke-width="2"/>
+  <text x="400" y="424" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Layer 3: Encryption At Rest (KMS)</text>
+  <text x="90" y="445" font-family="Arial" font-size="11">• All data stored on disk is AES-256 encrypted automatically via AWS KMS</text>
+  <text x="90" y="463" font-family="Arial" font-size="11">• Default: AWS-managed key (free) | Advanced: Customer-managed CMK (more control)</text>
+  <text x="90" y="481" font-family="Arial" font-size="11">  putItem({ name: "Pradeep" }) → DynamoDB encrypts before writing to disk</text>
+  <line x1="400" y1="490" x2="400" y2="520" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Layer 4: VPC Endpoint -->
+  <rect x="60" y="520" width="680" height="100" rx="8" fill="#e1d5e7" stroke="#9673a6" stroke-width="2"/>
+  <text x="400" y="544" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Layer 4: VPC Endpoint (Private Network)</text>
+  <text x="90" y="565" font-family="Arial" font-size="11">• Without VPC Endpoint: EC2 → Internet → DynamoDB (public route, needs NAT Gateway)</text>
+  <text x="90" y="583" font-family="Arial" font-size="11">• With VPC Endpoint: EC2 → AWS private network → DynamoDB (no internet involved)</text>
+  <text x="90" y="601" font-family="Arial" font-size="11">• Benefit: More secure, no NAT cost, traffic never leaves AWS backbone network</text>
+  <line x1="400" y1="620" x2="400" y2="650" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Layer 5: Client-Side Encryption -->
+  <rect x="60" y="650" width="680" height="90" rx="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="400" y="674" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">Layer 5: Client-Side Encryption (AWS DB Encryption SDK)</text>
+  <text x="90" y="695" font-family="Arial" font-size="11">• Encrypt sensitive fields (PII) BEFORE data leaves your app — highest protection tier</text>
+  <text x="90" y="713" font-family="Arial" font-size="11">• Flow: App encrypts with KMS key → sends ciphertext to DynamoDB (just an opaque blob)</text>
+  <text x="90" y="731" font-family="Arial" font-size="11">• Even AWS cannot read your data — zero-trust approach for compliance (GDPR, HIPAA)</text>
+
+  <!-- Summary -->
+  <rect x="60" y="775" width="680" height="110" fill="#f9f9f9" stroke="#ddd"/>
+  <text x="90" y="797" font-family="Arial" font-size="12" font-weight="bold">Security Layers (Defense in Depth):</text>
+  <text x="90" y="816" font-family="Arial" font-size="11">1. IAM — Who can access (Authorization)</text>
+  <text x="90" y="834" font-family="Arial" font-size="11">2. TLS — Data in motion protected</text>
+  <text x="90" y="852" font-family="Arial" font-size="11">3. KMS at-rest encryption — Data on disk protected</text>
+  <text x="90" y="870" font-family="Arial" font-size="11">4. VPC Endpoint — Private network (no public internet)</text>
+  <text x="90" y="888" font-family="Arial" font-size="11">5. Client-Side Encryption — App-level encryption (even AWS can't read)</text>
+</svg>
